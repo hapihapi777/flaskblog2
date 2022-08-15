@@ -47,9 +47,11 @@ def update(id):
         db.session.commit()
         return redirect('/')
 
-@app.route('/delete/<int:id>', methods=['GET'])
-def delete(id):
-    blogarticle = BlogArticle.query.get(id)
+@app.route('/delete', methods=['POST'])
+def delete():
+    # blogarticle = BlogArticle.query.get(id)
+    post_id = request.form.get("post_id")
+    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
     db.session.delete(blogarticle)
     db.session.commit()
     return redirect('/')
