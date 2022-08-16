@@ -1,3 +1,14 @@
 h1 {
   color: blue;
+  margin-right: 0px;
+  padding-right: 0px;
+}
+
+.inline {
+  display: inline-block;
+  
+}
+
+.red {
+  color: red;
 }
