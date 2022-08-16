@@ -55,3 +55,8 @@ def delete():
     db.session.delete(blogarticle)
     db.session.commit()
     return redirect('/')
+
+
+# デバッグモード用
+if __name__ == "__main__":
+    app.run(debug=True)
