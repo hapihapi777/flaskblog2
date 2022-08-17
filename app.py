@@ -56,7 +56,8 @@ def delete():
     db.session.commit()
     return redirect('/')
 
-
 # デバッグモード用
 if __name__ == "__main__":
     app.run(debug=True)
+
+# 8/18
