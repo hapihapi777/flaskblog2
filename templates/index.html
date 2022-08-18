@@ -4,24 +4,18 @@
 <h1 class="inline">ブログアプリ</h1>
   <input type="password">
   <input type="submit" value="ログイン">
-  (まだ)
-<br>
-<!-- 8/18 -->
-<!-- <a href="/create" role="button">新規作成画面</a> -->
+  (準備中)
+<hr>
+
 {% for blogarticle in blogarticles %}
 <article>
-  <h2 class="red">・{{ blogarticle.title }}</h2>
-  <!-- <a href="/update/{{ blogarticle.id }}" role="button">編集</a> -->
-  <!-- <form action="/delete" method="post">
-    <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
-    <button>削除</button>
-  </form> -->
-  <!-- <p>作成日時：{{ blogarticle.created_at }}</p> -->
-  {% set es = blogarticle.body.split('\r\n') %}
-  {% for e in es %}
-    <p>{{ e }}</p>
-  {% endfor %}
-  <!-- <p>{{ blogarticle.body }}</p> -->
+  <details>
+    <summary class="red">・{{ blogarticle.title }}</summary>
+    {{ blogarticle.body }}
+  </details>
+  <!-- <h2 class="red">・{{ blogarticle.title }}</h2>
+  <p>{{ blogarticle.body }}</p> -->
 </article>
+<hr>
 {% endfor %}
 {% endblock %}
