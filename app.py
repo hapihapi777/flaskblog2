@@ -9,14 +9,17 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 db = SQLAlchemy(app)
- 
- 
+
 class BlogArticle(db.Model):
     __tablename__ = "article"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(), nullable=False)
     body = db.Column(db.String(), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('Asia/Tokyo')))
+
+
+# app.config['PASSWORD'] = "7890"
+  
  
 @app.route('/', methods=['GET'])
 def blog():
@@ -54,6 +57,17 @@ def delete():
     blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
     db.session.delete(blogarticle)
     db.session.commit()
+    return redirect('/')
+
+@app.route('/master', methods=['GET', 'POST'])
+def login():
+  password = request.form.get("possword")
+  if password == "7890":
+    # print(app.config['PASSWORD'])
+  # app.config['PASSWORD']:
+    blogarticles = BlogArticle.query.all()
+    return render_template('/master.html', blogarticles=blogarticles)
+  else:
     return redirect('/')
 
 # デバッグモード用
