@@ -59,19 +59,22 @@ def delete():
     db.session.commit()
     return redirect('/')
 
-@app.route('/master', methods=['GET', 'POST'])
+@app.route('/master', methods=['GET'])
+def master_get():
+    blogarticles = BlogArticle.query.all()
+    return render_template('index.html', blogarticles=blogarticles)
+
+@app.route('/master', methods=['POST'])
 def login():
-  password = request.form.get("possword")
-  if password == "7890":
-    # print(app.config['PASSWORD'])
-  # app.config['PASSWORD']:
+#   password = request.form.get("possword")
+#   if password == "7890":
     blogarticles = BlogArticle.query.all()
     return render_template('/master.html', blogarticles=blogarticles)
-  else:
-    return redirect('/')
+#   else:
+#     return render_template('/index.html', blogarticles=blogarticles)
 
 # デバッグモード用
 if __name__ == "__main__":
     app.run(debug=True)
 
-# 8/18
+# 8/20(土)

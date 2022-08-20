@@ -2,14 +2,16 @@
 {% block content %}
 <article>
   <h1 class="inline">ブログアプリ</h1>
-  <form action="/" method="POST">
+  <form action="/master">
     <input type="password" name="password">
-    <input type="submit" value="ログイン">
+    <button type="submit" formmethod="GET">GET送信</button>
+    <button type="submit" formmethod="POST">POST送信</button>
+    <!-- <input type="submit" value="ログイン"> -->
   </form>
   (準備中)
 </article>
 <hr>
-<a href="/create" role="button">新規作成画面</a>
+<!-- <a href="/create" role="button">新規作成画面</a> -->
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
 
@@ -17,11 +19,11 @@
     <summary class="red">・{{ blogarticle.title }}</summary>
     
     <!-- <h2 class="red">・{{ blogarticle.title }}</h2> -->
-    <a href="/update/{{ blogarticle.id }}" role="button">編集</a>
-    <form action="/delete" method="POST">
-      <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
-      <button>削除</button>
-    </form>
+    <!-- <a href="/update/{{ blogarticle.id }}" role="button">編集</a> -->
+    <!-- <form action="/delete" method="POST"> -->
+      <!-- <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id=""> -->
+      <!-- <button>削除</button> -->
+    <!-- </form> -->
     {{ blogarticle.body }}
     <!-- <p>作成日時：{{ blogarticle.created_at }}</p> -->
   </details>
