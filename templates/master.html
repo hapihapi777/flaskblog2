@@ -10,18 +10,20 @@
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
-    <details>
-      <summary class="red">・{{ blogarticle.title }}</summary>
-    <!-- <h2 class="red">・{{ blogarticle.title }}</h2> -->
-    <!-- <a href="/update/{{ blogarticle.id }}" role="button">編集</a> -->
-    <form action="/delete" method="POST">
+  <details>
+    <summary class="red">・{{ blogarticle.title }}</summary>
+    <form action="/update">
       <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
-      <button>削除</button>
+      <button type="submit" formmethod="POST">編集</button>
+    </form>
+    <form action="/delete">
+      <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
+      <button type="submit" formmethod="POST">削除</button>
     </form>
     <!-- <p>作成日時：{{ blogarticle.created_at }}</p> -->
     <p>{{ blogarticle.body }}</p>
   </details>
-  </article>
-  <hr>
-  {% endfor %}
-  {% endblock %}
+</article>
+<hr>
+{% endfor %}
+{% endblock %}

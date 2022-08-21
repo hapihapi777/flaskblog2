@@ -39,16 +39,23 @@ def create():
     else:
         return render_template('create.html')
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
+@app.route('/update', methods=['GET', 'POST'])
 def update(id):
     blogarticle = BlogArticle.query.get(id)
-    if request.method == "GET":
-        return render_template('update.html', blogarticle=blogarticle)
-    else:
-        blogarticle.title = request.form.get('title')
-        blogarticle.body = request.form.get('body')
-        db.session.commit()
-        return redirect('/')
+    # if request.method == "GET":
+    return render_template('master.html', blogarticle=blogarticle)
+    # else:
+    #     blogarticle.title = request.form.get('title')
+    #     blogarticle.body = request.form.get('body')
+    #     db.session.commit()
+    #     return redirect('/')
+
+@app.route('/update', methods=['POST'])
+def upde():
+    blogarticle = BlogArticle.query.get(id)
+    post_id = request.form.get("post_id")
+    blogarticle.title = request.form.get('title')
+    blogarticle.body = request.form.get('body')
 
 @app.route('/delete', methods=['POST'])
 def delete():
