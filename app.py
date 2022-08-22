@@ -39,27 +39,22 @@ def create():
     else:
         return render_template('create.html')
 
-@app.route('/update', methods=['GET', 'POST'])
+@app.route('/update', methods=['GET'])
 def update(id):
     blogarticle = BlogArticle.query.get(id)
-    # if request.method == "GET":
-    return render_template('master.html', blogarticle=blogarticle)
-    # else:
-    #     blogarticle.title = request.form.get('title')
-    #     blogarticle.body = request.form.get('body')
-    #     db.session.commit()
-    #     return redirect('/')
+    return render_template('index.html', blogarticle=blogarticle)
+
 
 @app.route('/update', methods=['POST'])
 def upde():
-    blogarticle = BlogArticle.query.get(id)
     post_id = request.form.get("post_id")
+    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id)
     blogarticle.title = request.form.get('title')
     blogarticle.body = request.form.get('body')
+    return render_template('master.html', blogarticle=blogarticle)
 
 @app.route('/delete', methods=['POST'])
 def delete():
-    # blogarticle = BlogArticle.query.get(id)
     post_id = request.form.get("post_id")
     blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
     db.session.delete(blogarticle)
@@ -77,11 +72,9 @@ def login():
 #   if password == "7890":
     blogarticles = BlogArticle.query.all()
     return render_template('/master.html', blogarticles=blogarticles)
-#   else:
-#     return render_template('/index.html', blogarticles=blogarticles)
 
 # デバッグモード用
 if __name__ == "__main__":
     app.run(debug=True)
 
-# 8/20(土)
+# 8/22(月)
