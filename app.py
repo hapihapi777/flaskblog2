@@ -39,19 +39,19 @@ def create():
     else:
         return render_template('create.html')
 
-@app.route('/update', methods=['GET'])
-def update(id):
-    blogarticle = BlogArticle.query.get(id)
-    return render_template('index.html', blogarticle=blogarticle)
+# @app.route('/update', methods=['GET'])
+# def update(id):
+#     blogarticle = BlogArticle.query.get(id)
+#     blogarticle.title = request.form.get('title')
+#     blogarticle.body = request.form.get('body')
+#     return render_template('index.html', blogarticle=blogarticle)
 
 
 @app.route('/update', methods=['POST'])
 def upde():
     post_id = request.form.get("post_id")
-    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id)
-    blogarticle.title = request.form.get('title')
-    blogarticle.body = request.form.get('body')
-    return render_template('master.html', blogarticle=blogarticle)
+    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
+    return render_template('update.html', blogarticle=blogarticle)
 
 @app.route('/delete', methods=['POST'])
 def delete():
