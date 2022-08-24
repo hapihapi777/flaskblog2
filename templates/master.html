@@ -11,7 +11,7 @@
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
   <details>
-    <summary class="red">・{{ blogarticle.title }}</summary>
+    <summary class="red">(タイトル){{ blogarticle.title }}</summary>
     <form action="/update">
       <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
       <button type="submit" formmethod="POST">編集</button>

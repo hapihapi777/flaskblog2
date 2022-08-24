@@ -20,13 +20,14 @@ class BlogArticle(db.Model):
 
 # app.config['PASSWORD'] = "7890"
   
- 
+# topページ
 @app.route('/', methods=['GET'])
 def blog():
     if request.method == 'GET':
         blogarticles = BlogArticle.query.all()
         return render_template('index.html', blogarticles=blogarticles)
 
+# 新規作成画面
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == "POST":
@@ -39,20 +40,31 @@ def create():
     else:
         return render_template('create.html')
 
-# @app.route('/update', methods=['GET'])
-# def update(id):
-#     blogarticle = BlogArticle.query.get(id)
-#     blogarticle.title = request.form.get('title')
-#     blogarticle.body = request.form.get('body')
-#     return render_template('index.html', blogarticle=blogarticle)
+# updateにGETで来た場合
+@app.route('/update', methods=['GET'])
+def update_get():
+    blogarticles = BlogArticle.query.all()
+    return render_template('/master.html', blogarticles=blogarticles)
 
-
+# updateにPOSTで来た場合(正常動作)
 @app.route('/update', methods=['POST'])
-def upde():
+def update():
     post_id = request.form.get("post_id")
     blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
     return render_template('update.html', blogarticle=blogarticle)
 
+# updateページから更新する場合
+@app.route('/do_update', methods=['POST'])
+def do_update():
+    post_id = request.form.get("post_id")
+    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
+    blogarticle.title = request.form.get('title')
+    blogarticle.body = request.form.get('body')
+    db.session.add(blogarticle)
+    db.session.commit()
+    return redirect('/')
+
+# 削除する場合(現状一発で削除されてしまう)
 @app.route('/delete', methods=['POST'])
 def delete():
     post_id = request.form.get("post_id")
@@ -61,11 +73,13 @@ def delete():
     db.session.commit()
     return redirect('/')
 
+# 編集可能なmasterページにGETで来た場合(エラーとして戻す)
 @app.route('/master', methods=['GET'])
 def master_get():
     blogarticles = BlogArticle.query.all()
     return render_template('index.html', blogarticles=blogarticles)
 
+# 編集可能なmasterページにPOSTで来た場合(正常動作)
 @app.route('/master', methods=['POST'])
 def login():
 #   password = request.form.get("possword")
@@ -77,4 +91,4 @@ def login():
 if __name__ == "__main__":
     app.run(debug=True)
 
-# 8/22(月)
+# 8/25(水)
