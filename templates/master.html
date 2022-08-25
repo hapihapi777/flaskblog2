@@ -6,22 +6,26 @@
 <p class="red">ログイン中</p>
   (準備中)
 <br>
-<a href="/create" role="button">新規作成画面</a>
+<form action="/create">
+  <button type="submit" formmethod="POST">新規作成画面</button>
+</form>
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
   <details>
     <summary class="red">(タイトル){{ blogarticle.title }}</summary>
-    <form action="/update">
-      <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
-      <button type="submit" formmethod="POST">編集</button>
-    </form>
-    <form action="/delete">
-      <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
-      <button type="submit" formmethod="POST">削除</button>
-    </form>
-    <!-- <p>作成日時：{{ blogarticle.created_at }}</p> -->
     <p>{{ blogarticle.body }}</p>
+    <p class="inline">
+      <form action="/update" class="inline" >
+        <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
+        <button type="submit" formmethod="POST">編集</button>
+      </form>
+      <form action="/delete">
+        <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
+        <button type="submit" formmethod="POST">削除</button>
+      </form>
+    </p>
+    <!-- <p>作成日時：{{ blogarticle.created_at }}</p> -->
   </details>
 </article>
 <hr>

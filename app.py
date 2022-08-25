@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect
 import psycopg2
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -29,7 +29,15 @@ def blog():
 
 # 新規作成画面
 @app.route('/create', methods=['GET', 'POST'])
-def create():
+def craete():
+    if request.method == "POST":
+        return render_template('create.html')
+    else:
+        return redirect('/')
+
+# 新規作成メソッド
+@app.route('/do_create', methods=['GET', 'POST'])
+def do_create():
     if request.method == "POST":
         title = request.form.get('title')
         body = request.form.get('body')
@@ -38,20 +46,18 @@ def create():
         db.session.commit()
         return redirect('/')
     else:
-        return render_template('create.html')
-
-# updateにGETで来た場合
-@app.route('/update', methods=['GET'])
-def update_get():
-    blogarticles = BlogArticle.query.all()
-    return render_template('/master.html', blogarticles=blogarticles)
+        return redirect('/')
 
 # updateにPOSTで来た場合(正常動作)
-@app.route('/update', methods=['POST'])
+# とそれ以外に設定
+@app.route('/update', methods=['GET', 'POST'])
 def update():
-    post_id = request.form.get("post_id")
-    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
-    return render_template('update.html', blogarticle=blogarticle)
+    if request.method == "POST":
+        post_id = request.form.get("post_id")
+        blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
+        return render_template('update.html', blogarticle=blogarticle)
+    else:
+        return redirect('/')
 
 # updateページから更新する場合
 @app.route('/do_update', methods=['POST'])
@@ -73,19 +79,15 @@ def delete():
     db.session.commit()
     return redirect('/')
 
-# 編集可能なmasterページにGETで来た場合(エラーとして戻す)
-@app.route('/master', methods=['GET'])
-def master_get():
-    blogarticles = BlogArticle.query.all()
-    return render_template('index.html', blogarticles=blogarticles)
-
-# 編集可能なmasterページにPOSTで来た場合(正常動作)
+# 編集可能なmasterページにPOSTで来た場合(正常動作)とそれ以外に設定
 @app.route('/master', methods=['POST'])
 def login():
-#   password = request.form.get("possword")
-#   if password == "7890":
-    blogarticles = BlogArticle.query.all()
-    return render_template('/master.html', blogarticles=blogarticles)
+    if request.method == "POST":
+    # and request.form.get("possword") == "7890":
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
+    else:
+        return redirect('/')
 
 # デバッグモード用
 if __name__ == "__main__":
