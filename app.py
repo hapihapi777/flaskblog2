@@ -1,5 +1,7 @@
+import os
 from flask import Flask
 from flask import render_template, request, redirect
+# from flask_login import UserMixin, LoginManager
 import psycopg2
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -8,7 +10,18 @@ import pytz
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
+# app.config['SECRET_KEY'] = os.urandom(24)
 db = SQLAlchemy(app)
+
+# ログイン用 製作中
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+
+# class User(UserMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(20), nullable=False, unique=True)
+#     password = db.Column(db.String(12))
+
 
 class BlogArticle(db.Model):
     __tablename__ = "article"
