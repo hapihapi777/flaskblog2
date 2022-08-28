@@ -1,32 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<article>
-  <h1 class="">ブログアプリ</h1>
-  <form action="/master">
-    <!-- <button type="submit" formmethod="POST">編集ページに移動</button> -->
-  </form>
-  <details>
-    <summary class="red">(id,pass登録用)</summary>
-    ID登録用 
-    <input type="" name="">
-    PASS登録用
-    <input type="" name="">
-  </details>
-  (準備中)
-  <hr>
-  <details>
-    <summary class="red">(id,pass入力用)</summary>
-    ID入力欄
-    <input type="" name="">
-    PASS入力欄
-    <input type="" name="">
-  </details>
-  (準備中)
-</article>
+<h1 class="">ブログアプリ</h1>
+<form action="/signup">
+  <button type="submit" formmethod="POST">新規user登録ページへ</button>
+</form>
+<hr>
+<form action="/login">
+  <button type="submit" formmethod="POST">ログインページへ</button>
+</form>
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
-
   <details>
     <summary class="red">(タイトル){{ blogarticle.title }}</summary>
     {{ blogarticle.body }}

@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1 class="inline">ブログアプリ</h1>
-  <!-- <input type="password">
-  <input type="submit" value="ログイン"> -->
 <p class="red">ログイン中</p>
+<form action="/logout">
+  <button type="submit" formmethod="POST">ログアウト</button>
+</form>
   (準備中)
 <br>
 <form action="/create">
