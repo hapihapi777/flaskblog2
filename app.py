@@ -175,3 +175,7 @@ def delete():
     db.session.delete(blogarticle)
     db.session.commit()
     return redirect('/')
+
+
+
+# 9/1 テスト
