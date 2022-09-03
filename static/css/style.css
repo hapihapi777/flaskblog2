@@ -9,6 +9,16 @@ h1 {
   
 }
 
+summary {
+  display: block;
+  list-style: none;
+}
+
+/* 一部ブラウザで消えなかった場合は以下も追記 */
+summary::-webkit-details-marker {
+  display:none;
+}
+
 .red {
   color: red;
 }
