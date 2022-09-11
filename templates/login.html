@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>ログインページ</h1>
-<form method="POST">
+<form action="/do_login" method="POST">
   <label for="">user名</label>
   <input type="text" name="username">
   <label for="">パスワード</label>

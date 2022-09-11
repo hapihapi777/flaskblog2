@@ -2,4 +2,4 @@ venv/
 __pycache__/
 *.js
 *.db
-memo.text
+memo.txt
