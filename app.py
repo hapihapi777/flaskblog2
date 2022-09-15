@@ -1,4 +1,5 @@
 # from curses import flash
+from crypt import methods
 import os
 import re
 from flask import Flask, render_template, request, redirect, url_for
@@ -11,8 +12,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
  
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog"
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog2"
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 db = SQLAlchemy(app)
 
@@ -83,7 +84,7 @@ def do_signup():
         db.session.add(user)
         db.session.commit()
         # flash('登録に成功')
-        return redirect('/login')
+        return render_template('login.html')
     else:
         # flash('登録に失敗')
         return render_template('/error.html')
@@ -113,7 +114,8 @@ def craete():
     if request.method == "POST":
         return render_template('create.html')
     else:
-        return redirect(url_for('master'))
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
 
 # 新規作成メソッド
 @app.route('/do_create', methods=['GET', 'POST'])
@@ -128,7 +130,8 @@ def do_create():
         blogarticles = BlogArticle.query.all()
         return render_template('/master.html', blogarticles=blogarticles)
     else:
-        return redirect(url_for('master'))
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
 
 # updateにPOSTで来た場合(正常動作)
 # とそれ以外に設定
@@ -140,33 +143,44 @@ def update():
         blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
         return render_template('update.html', blogarticle=blogarticle)
     else:
-        return redirect(url_for('master'))
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
 
 # updateページから更新する場合
 @app.route('/do_update', methods=['POST'])
 @login_required
 def do_update():
-    post_id = request.form.get("post_id")
-    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
-    blogarticle.title = request.form.get('title')
-    blogarticle.body = request.form.get('body')
-    db.session.add(blogarticle)
-    db.session.commit()
-    blogarticles = BlogArticle.query.all()
-    return render_template('/master.html', blogarticles=blogarticles)
+    if request.method == "POST":
+        post_id = request.form.get("post_id")
+        blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
+        blogarticle.title = request.form.get('title')
+        blogarticle.body = request.form.get('body')
+        db.session.add(blogarticle)
+        db.session.commit()
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
+    else:
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
+        
 
 # 削除する場合(現状一発で削除されてしまう)
 @app.route('/delete', methods=['POST'])
 @login_required
 def delete():
-    post_id = request.form.get("post_id")
-    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
-    db.session.delete(blogarticle)
-    db.session.commit()
-    return redirect(url_for('master'))
+    if request.method == "POST":
+        post_id = request.form.get("post_id")
+        blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
+        db.session.delete(blogarticle)
+        db.session.commit()
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
+    else:
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles)
 
 # ログアウト用
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
