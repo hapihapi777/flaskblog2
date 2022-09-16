@@ -12,9 +12,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
  
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
+# DATABASE_URL = os.environ['DATABASE_URL']
+
+# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog2"
-# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
+# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog2"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
