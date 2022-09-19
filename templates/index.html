@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="">ブログアプリ</h1>
-<form action="/signup">
-  <button type="submit" formmethod="POST">新規user登録ページへ</button>
-</form>
-<form action="/login">
-  <button type="submit" formmethod="POST">ログインページへ</button>
-</form>
+<div class="container">
+  <form action="/signup">
+    <h1 class="">ブログアプリ</h1>
+    <button class="right" type="submit" formmethod="POST">新規user登録ページへ</button>
+  </form>
+</div>
+  <form class="" action="/login">
+    <button type="submit" formmethod="POST">ログインページへ</button>
+  </form>
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>

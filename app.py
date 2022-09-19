@@ -22,20 +22,20 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-# ログイン用 製作中
+# ログイン用
 
 class BlogArticle(db.Model):
     __tablename__ = "article"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(30), nullable=False)
-    body = db.Column(db.String(20), nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    body = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('Asia/Tokyo')))
   
 class User(UserMixin, db.Model):
     __tablename__ = "signup"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String())
+    password = db.Column(db.String(100))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -55,7 +55,8 @@ def master():
     if request.method == "POST":
     # and request.form.get("possword") == "7890":
         blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles)
+        username = User.username
+        return render_template('/master.html', blogarticles=blogarticles, username=username)
     else:
         return redirect('/')
 
@@ -153,18 +154,14 @@ def update():
 @app.route('/do_update', methods=['POST'])
 @login_required
 def do_update():
-    if request.method == "POST":
-        post_id = request.form.get("post_id")
-        blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
-        blogarticle.title = request.form.get('title')
-        blogarticle.body = request.form.get('body')
-        db.session.add(blogarticle)
-        db.session.commit()
-        blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles)
-    else:
-        blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles)
+    post_id = request.form.get("post_id")
+    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
+    blogarticle.title = request.form.get('title')
+    blogarticle.body = request.form.get('body')
+    db.session.add(blogarticle)
+    db.session.commit()
+    blogarticles = BlogArticle.query.all()
+    return render_template('/master.html', blogarticles=blogarticles)
         
 
 # 削除する場合(現状一発で削除されてしまう)
@@ -183,7 +180,8 @@ def delete():
         return render_template('/master.html', blogarticles=blogarticles)
 
 # ログアウト用
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
 def logout():
     logout_user()
     return redirect('/')

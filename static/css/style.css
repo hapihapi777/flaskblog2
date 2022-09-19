@@ -2,11 +2,28 @@ h1 {
   color: blue;
   margin-right: 0px;
   padding-right: 0px;
+  text-align: left;
+}
+
+.container {
+  /* white-space: nowrap;
+  display: inline; */
+  display: flex;
+}
+
+.right {
+  margin-right: 0;
+  margin-left: auto;
+  text-align: right;
 }
 
 .inline {
-  display: inline-block;
-  
+  white-space: nowrap;
+  display: inline;
+}
+
+h1 {
+  display: inline;
 }
 
 summary {
