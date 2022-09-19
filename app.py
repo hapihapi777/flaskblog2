@@ -184,7 +184,6 @@ def delete():
 
 # ログアウト用
 @app.route('/logout', methods=['POST'])
-@login_required
 def logout():
     logout_user()
     return redirect('/')
