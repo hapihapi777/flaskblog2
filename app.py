@@ -180,7 +180,7 @@ def delete():
         return redirect(url_for('logout'))
 
 # ログアウト用
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
     return redirect('/')
