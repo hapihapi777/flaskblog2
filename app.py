@@ -12,9 +12,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
  
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-# DATABASE_URL = os.environ['DATABASE_URL']
 
+# DATABASE_URL = os.environ['DATABASE_URL']
 # conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog2"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
@@ -48,7 +49,7 @@ def blog():
     return render_template('index.html', blogarticles=blogarticles)
 
 # 編集可能なmasterページにPOSTで来た場合(正常動作)とそれ以外に設定
-@app.route('/master', methods=['GET', 'POST'])
+@app.route('/master', methods=['POST'])
 @login_required
 def master():
     if request.method == "POST":
@@ -58,7 +59,7 @@ def master():
         return redirect(url_for('logout'))
 
 # signupページに飛ぶだけ
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup', methods=['POST'])
 def signup():
     if request.method == "POST":
         return render_template('/signup.html')
@@ -66,7 +67,7 @@ def signup():
         return redirect(url_for('logout'))
 
 # loginページに飛ぶだけ
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
     if request.method == "POST":
         return render_template('/login.html')
@@ -74,7 +75,7 @@ def login():
         return redirect(url_for('logout'))
 
 # signupページ内でuser登録をする為の関数(全然上手くいかない)
-@app.route('/do_signup', methods=['GET', 'POST'])
+@app.route('/do_signup', methods=['POST'])
 def do_signup():
     if request.method == "POST":
         username = request.form.get('register_user')
@@ -91,7 +92,7 @@ def do_signup():
         return redirect(url_for('logout'))
 
 # 登録済みのuserが入力された場合にのみmasterページに飛ぶ関数
-@app.route('/do_login', methods=['GET', 'POST'])
+@app.route('/do_login', methods=['POST'])
 def do_login():
     if request.method == "POST":
         username = request.form.get('username')
@@ -110,7 +111,7 @@ def do_login():
         return redirect(url_for('logout'))
 
 # 新規作成画面
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['POST'])
 @login_required
 def craete():
     if request.method == "POST":
@@ -119,7 +120,7 @@ def craete():
         return redirect(url_for('logout'))
 
 # 新規作成メソッド
-@app.route('/do_create', methods=['GET', 'POST'])
+@app.route('/do_create', methods=['POST'])
 @login_required
 def do_create():
     if request.method == "POST":
@@ -133,9 +134,9 @@ def do_create():
     else:
         return redirect(url_for('logout'))
 
-# updateにPOSTで来た場合(正常動作)
+# updateにPOSTで来た場合
 # とそれ以外に設定
-@app.route('/update', methods=['GET', 'POST'])
+@app.route('/update', methods=['POST'])
 @login_required
 def update():
     if request.method == "POST":
@@ -146,7 +147,7 @@ def update():
         return redirect(url_for('logout'))
 
 # updateページから更新する場合
-@app.route('/do_update', methods=['GET', 'POST'])
+@app.route('/do_update', methods=['POST'])
 @login_required
 def do_update():
     if request.method == "POST":
@@ -165,7 +166,7 @@ def do_update():
         
 
 # 削除する場合(現状一発で削除されてしまう)
-@app.route('/delete', methods=['GET', 'POST'])
+@app.route('/delete', methods=['POST'])
 @login_required
 def delete():
     if request.method == "POST":
@@ -179,7 +180,7 @@ def delete():
         return redirect(url_for('logout'))
 
 # ログアウト用
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
     return redirect('/')
