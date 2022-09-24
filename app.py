@@ -11,7 +11,8 @@ import pytz
 from werkzeug.security import generate_password_hash, check_password_hash
  
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+# app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = "secret"
 
 # DATABASE_URL = os.environ['DATABASE_URL']
 # conn = psycopg2.connect(DATABASE_URL, sslmode='require')

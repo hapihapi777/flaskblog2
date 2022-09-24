@@ -17,7 +17,7 @@
   <details>
     <summary class="red">(タイトル){{ blogarticle.title }}</summary>
     <p>{{ blogarticle.body }}</p>
-    <p class="inline">
+    <div class="inline">
       <form action="/update" class="inline" >
         <input type="hidden" name="post_id" value="{{ blogarticle.id }}">
         <button type="submit" formmethod="POST">編集</button>
@@ -26,8 +26,8 @@
         <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
         <button type="submit" formmethod="POST">削除</button>
       </form>
-    </p>
-    <!-- <p>作成日時：{{ blogarticle.created_at }}</p> -->
+    </div>
+    <!-- <div>作成日時：{{ blogarticle.created_at }}</div> -->
   </details>
 </article>
 <hr>
