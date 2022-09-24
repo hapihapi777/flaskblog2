@@ -39,6 +39,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(100))
 
+login_name = ""
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -49,16 +51,6 @@ def blog():
     blogarticles = BlogArticle.query.all()
     return render_template('index.html', blogarticles=blogarticles)
 
-# 編集可能なmasterページにPOSTで来た場合(正常動作)とそれ以外に設定
-@app.route('/master', methods=['POST'])
-@login_required
-def master():
-    if request.method == "POST":
-        username = username
-        blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles, username=username)
-    else:
-        return redirect(url_for('logout'))
 
 # signupページに飛ぶだけ
 @app.route('/signup', methods=['POST'])
@@ -115,12 +107,24 @@ def do_login():
     else:
         return redirect(url_for('logout'))
 
+# 編集可能なmasterページにPOSTで来た場合(正常動作)とそれ以外に設定
+@app.route('/master', methods=['POST'])
+@login_required
+def master():
+    if request.method == "POST":
+        username = request.form.get('username')
+        blogarticles = BlogArticle.query.all()
+        return render_template('/master.html', blogarticles=blogarticles, username=username)
+    else:
+        return redirect(url_for('logout'))
+
 # 新規作成画面
 @app.route('/create', methods=['POST'])
 @login_required
 def craete():
     if request.method == "POST":
-        return render_template('create.html')
+        username = request.form.get('username')
+        return render_template('create.html', username=username)
     else:
         return redirect(url_for('logout'))
 
@@ -129,13 +133,17 @@ def craete():
 @login_required
 def do_create():
     if request.method == "POST":
+        username = request.form.get('username')
         title = request.form.get('title')
         body = request.form.get('body')
-        blogarticle = BlogArticle(title=title, body=body)
-        db.session.add(blogarticle)
-        db.session.commit()
-        blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles)
+        if title == "":
+            return render_template('create.html', username=username)
+        else:
+            blogarticle = BlogArticle(title=title, body=body)
+            db.session.add(blogarticle)
+            db.session.commit()
+            blogarticles = BlogArticle.query.all()
+            return render_template('/master.html', blogarticles=blogarticles, username=username)
     else:
         return redirect(url_for('logout'))
 
@@ -147,7 +155,8 @@ def update():
     if request.method == "POST":
         post_id = request.form.get("post_id")
         blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
-        return render_template('update.html', blogarticle=blogarticle)
+        username = request.form.get('username')
+        return render_template('update.html', blogarticle=blogarticle, username=username)
     else:
         return redirect(url_for('logout'))
 
@@ -157,18 +166,19 @@ def update():
 def do_update():
     if request.method == "POST":
         post_id = request.form.get("post_id")
+        username = request.form.get('username')
         blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
-        blogarticle.title = request.form.get('title')
-        blogarticle.body = request.form.get('body')
-        db.session.add(blogarticle)
-        db.session.commit()
-        blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles)
-        # return redirect(url_for('master'))
+        if request.form.get('title') == "":
+            return render_template('update.html', blogarticle=blogarticle, username=username)
+        else:
+            blogarticle.title = request.form.get('title')
+            blogarticle.body = request.form.get('body')
+            db.session.add(blogarticle)
+            db.session.commit()
+            blogarticles = BlogArticle.query.all()
+            return render_template('/master.html', blogarticles=blogarticles, username=username)
     else:
         return redirect(url_for('logout'))
-        
-        
 
 # 削除する場合(現状一発で削除されてしまう)
 @app.route('/delete', methods=['POST'])
@@ -180,7 +190,8 @@ def delete():
         db.session.delete(blogarticle)
         db.session.commit()
         blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles)
+        username = request.form.get('username')
+        return render_template('/master.html', blogarticles=blogarticles, username=username)
     else:
         return redirect(url_for('logout'))
 

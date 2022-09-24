@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>新規記事登録画面</h1>
-
+<div class="container">
+    <h1>記事登録画面</h1>
+    <div class="red">{{ username }}でログイン中</div>
+</div>
 <form action="do_create" method="POST">
     <label for="title">タイトル</label>
     <br>
@@ -11,6 +13,7 @@
     <br>
     <textarea type="text" name="body" rows="10" cols="60" wrap=”hard”></textarea>
     <br>
+    <input type="hidden" name="username" value="{{ username }}">
     <input type="submit" value="新規登録">
 </form>
 {% endblock %}

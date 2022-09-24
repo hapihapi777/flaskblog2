@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>編集画面</h1>
-
+<div class="red">{{ username }}でログイン中</div>
 <form action="/do_update" method="POST">
     <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
     <label for="title">タイトル</label>
@@ -12,6 +12,7 @@
     <br>
     <textarea type="text" name="body" rows="10" cols="60" wrap=”hard”>{{ blogarticle.body }}</textarea>
     <br>
+    <input type="hidden" name="username" value="{{ username }}">
     <input type="submit" value="更新">
 </form>
 {% endblock %}
