@@ -1,19 +1,24 @@
 h1 {
   color: blue;
-  margin-right: 0px;
-  padding-right: 0px;
+  /* margin-right: 0px; */
+  /* padding-right: 0px; */
+  margin: 0 70% 1% 0;
   text-align: left;
 }
 
+.evo {
+  margin: 0 0 1rem 0;
+}
+
 .container {
-  /* white-space: nowrap;
-  display: inline; */
+  /* white-space: nowrap; */
+  /* display: inline; */
   display: flex;
 }
 
 .right {
-  margin-right: 0;
-  margin-left: auto;
+  /* margin-right: 0; */
+  /* margin-left: auto; */
   text-align: right;
 }
 

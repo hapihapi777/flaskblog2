@@ -1,7 +1,7 @@
 # from curses import flash
 from crypt import methods
 import os
-import re
+# import re
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
 import psycopg2
@@ -53,8 +53,9 @@ def blog():
 @login_required
 def master():
     if request.method == "POST":
+        username = username
         blogarticles = BlogArticle.query.all()
-        return render_template('/master.html', blogarticles=blogarticles)
+        return render_template('/master.html', blogarticles=blogarticles, username=username)
     else:
         return redirect(url_for('logout'))
 
@@ -74,7 +75,7 @@ def login():
     else:
         return redirect(url_for('logout'))
 
-# signupページ内でuser登録をする為の関数(全然上手くいかない)
+# signupページ内でuser登録をする為の関数
 @app.route('/do_signup', methods=['POST'])
 def do_signup():
     if request.method == "POST":
@@ -97,12 +98,15 @@ def do_login():
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
+
         # Userテーブルからusernameに一致するユーザを取得
         user = User.query.filter_by(username=username).first()
+
         if check_password_hash(user.password, password):
             login_user(user)
             blogarticles = BlogArticle.query.all()
-            return render_template('/master.html', blogarticles=blogarticles)
+            
+            return render_template('/master.html', blogarticles=blogarticles, username=username)
             # return redirect(url_for('master'))
         else:
             # flash('入力に失敗')

@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="inline">ブログアプリ</h1>
-<p class="red">ログイン中</p>
-<form action="/logout">
-  <button type="submit" formmethod="POST">ログアウト</button>
-</form>
+<div class="container">
+  <h1>ブログアプリ</h1>
+  <form action="/logout">
+    <button type="submit" formmethod="POST">ログアウト</button>
+  </form>
+</div>
+<div class="red">ID:{{ username }}でログイン中</div>
 <form action="/create">
   <button type="submit" formmethod="POST">新規作成画面</button>
 </form>
+<input type="hidden" name="username" value="{{ username }}">
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
@@ -16,7 +19,7 @@
     <p>{{ blogarticle.body }}</p>
     <p class="inline">
       <form action="/update" class="inline" >
-        <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
+        <input type="hidden" name="post_id" value="{{ blogarticle.id }}">
         <button type="submit" formmethod="POST">編集</button>
       </form>
       <form action="/delete">

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>編集画面</h1>
+
 <form action="/do_update" method="POST">
     <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
     <label for="title">タイトル</label>
