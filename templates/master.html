@@ -9,7 +9,7 @@
 <div class="red">{{ username }}でログイン中</div>
 <form action="/create">
   <input type="hidden" name="username" value="{{ username }}">
-  <button type="submit" formmethod="POST">記事登録画面</button>
+  <button type="submit" formmethod="POST" style="margin-top: 8px;">記事登録画面</button>
 </form>
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
@@ -17,7 +17,7 @@
   <details>
     <summary class="red">{{ blogarticle.title }}</summary>
     <p>{{ blogarticle.body }}</p>
-    <div class="inline">
+    <div class="container">
       <form action="/update" class="inline" >
         <input type="hidden" name="post_id" value="{{ blogarticle.id }}">
         <input type="hidden" name="username" value="{{ username }}">

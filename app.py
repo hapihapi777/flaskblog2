@@ -1,13 +1,9 @@
 # from curses import flash
-from crypt import methods
-import os
-# import re
+import os, psycopg2, pytz
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
-import psycopg2
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import pytz
 from werkzeug.security import generate_password_hash, check_password_hash
  
 app = Flask(__name__)
@@ -137,7 +133,7 @@ def do_create():
         title = request.form.get('title')
         body = request.form.get('body')
         if title == "":
-            return render_template('create.html', username=username)
+            return render_template('create.html', username=username, comment="＊タイトルを入れてください")
         else:
             blogarticle = BlogArticle(title=title, body=body)
             db.session.add(blogarticle)
@@ -169,7 +165,7 @@ def do_update():
         username = request.form.get('username')
         blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
         if request.form.get('title') == "":
-            return render_template('update.html', blogarticle=blogarticle, username=username)
+            return render_template('update.html', blogarticle=blogarticle, username=username, comment="＊タイトルを入れてください")
         else:
             blogarticle.title = request.form.get('title')
             blogarticle.body = request.form.get('body')
