@@ -35,7 +35,11 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(100))
 
-login_name = ""
+# class Display():
+#     l_user = ""
+#     e_comment = ""
+
+Display = {'username': '', 'エラーコメント': ''}
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -49,23 +53,23 @@ def blog():
 
 
 # signupページに飛ぶだけ
-@app.route('/signup', methods=['POST'])
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == "POST":
+    # if request.method == "POST":
         return render_template('/signup.html')
-    else:
-        return redirect(url_for('logout'))
+    # else:
+    #     return redirect(url_for('logout'))
 
 # loginページに飛ぶだけ
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
+    # if request.method == "POST":
         return render_template('/login.html')
-    else:
-        return redirect(url_for('logout'))
+    # else:
+    #     return redirect(url_for('logout'))
 
 # signupページ内でuser登録をする為の関数
-@app.route('/do_signup', methods=['POST'])
+@app.route('/do_signup', methods=['GET', 'POST'])
 def do_signup():
     if request.method == "POST":
         username = request.form.get('register_user')
@@ -82,7 +86,7 @@ def do_signup():
         return redirect(url_for('logout'))
 
 # 登録済みのuserが入力された場合にのみmasterページに飛ぶ関数
-@app.route('/do_login', methods=['POST'])
+@app.route('/do_login', methods=['GET', 'POST'])
 def do_login():
     if request.method == "POST":
         username = request.form.get('username')
@@ -93,10 +97,11 @@ def do_login():
 
         if check_password_hash(user.password, password):
             login_user(user)
-            blogarticles = BlogArticle.query.all()
-            
-            return render_template('/master.html', blogarticles=blogarticles, username=username)
-            # return redirect(url_for('master'))
+            # blogarticles = BlogArticle.query.all()
+            # Display.l_user = username
+            Display['username'] = username
+            # return render_template('/master.html', blogarticles=blogarticles, username=username)
+            return redirect(url_for('master'))
         else:
             # flash('入力に失敗')
             return render_template('/login.html')
@@ -104,60 +109,64 @@ def do_login():
         return redirect(url_for('logout'))
 
 # 編集可能なmasterページにPOSTで来た場合(正常動作)とそれ以外に設定
-@app.route('/master', methods=['POST'])
+@app.route('/master', methods=['GET', 'POST'])
 @login_required
 def master():
-    if request.method == "POST":
-        username = request.form.get('username')
+    # if request.method == "POST":
+        # username = Display.l_user
+        username = Display['username']
         blogarticles = BlogArticle.query.all()
         return render_template('/master.html', blogarticles=blogarticles, username=username)
-    else:
-        return redirect(url_for('logout'))
+    # else:
+    #     return redirect(url_for('logout'))
 
 # 新規作成画面
-@app.route('/create', methods=['POST'])
+@app.route('/create', methods=['GET', 'POST'])
 @login_required
-def craete():
-    if request.method == "POST":
-        username = request.form.get('username')
-        return render_template('create.html', username=username)
-    else:
-        return redirect(url_for('logout'))
+def create():
+    # if request.method == "POST":
+        # comment = Display['エラーコメント']
+        # Display['エラーコメント'] = ''
+        return render_template('create.html', username=Display['username'], comment=Display['エラーコメント'])
+    # else:
+    #     return redirect(url_for('logout'))
 
 # 新規作成メソッド
-@app.route('/do_create', methods=['POST'])
+@app.route('/do_create', methods=['GET', 'POST'])
 @login_required
 def do_create():
     if request.method == "POST":
-        username = request.form.get('username')
+        # username = Display['username']
         title = request.form.get('title')
         body = request.form.get('body')
         if title == "":
-            return render_template('create.html', username=username, comment="＊タイトルを入れてください")
+            Display['エラーコメント'] = '＊タイトルを入れてください'
+            return redirect(url_for('create'))
         else:
             blogarticle = BlogArticle(title=title, body=body)
             db.session.add(blogarticle)
             db.session.commit()
-            blogarticles = BlogArticle.query.all()
-            return render_template('/master.html', blogarticles=blogarticles, username=username)
+            Display['エラーコメント'] = ''
+            # blogarticles = BlogArticle.query.all()
+            return redirect(url_for('master'))
     else:
         return redirect(url_for('logout'))
 
 # updateにPOSTで来た場合
 # とそれ以外に設定
-@app.route('/update', methods=['POST'])
+@app.route('/update', methods=['GET', 'POST'])
 @login_required
 def update():
-    if request.method == "POST":
+    # if request.method == "POST":
         post_id = request.form.get("post_id")
         blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
         username = request.form.get('username')
         return render_template('update.html', blogarticle=blogarticle, username=username)
-    else:
-        return redirect(url_for('logout'))
+    # else:
+    #     return redirect(url_for('logout'))
 
 # updateページから更新する場合
-@app.route('/do_update', methods=['POST'])
+@app.route('/do_update', methods=['GET', 'POST'])
 @login_required
 def do_update():
     if request.method == "POST":
@@ -171,13 +180,14 @@ def do_update():
             blogarticle.body = request.form.get('body')
             db.session.add(blogarticle)
             db.session.commit()
-            blogarticles = BlogArticle.query.all()
-            return render_template('/master.html', blogarticles=blogarticles, username=username)
+            # blogarticles = BlogArticle.query.all()
+            # return render_template('/master.html', blogarticles=blogarticles, username=username)
+            return redirect(url_for('master'))
     else:
         return redirect(url_for('logout'))
 
 # 削除する場合(現状一発で削除されてしまう)
-@app.route('/delete', methods=['POST'])
+@app.route('/delete', methods=['GET', 'POST'])
 @login_required
 def delete():
     if request.method == "POST":
@@ -185,15 +195,18 @@ def delete():
         blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
         db.session.delete(blogarticle)
         db.session.commit()
-        blogarticles = BlogArticle.query.all()
-        username = request.form.get('username')
-        return render_template('/master.html', blogarticles=blogarticles, username=username)
+        # blogarticles = BlogArticle.query.all()
+        # username = request.form.get('username')
+        # return render_template('/master.html', blogarticles=blogarticles, username=username)
+        return redirect(url_for('master'))
     else:
         return redirect(url_for('logout'))
 
 # ログアウト用
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
+    Display['username'] = ''
+    Display['エラーコメント'] = ''
     return redirect('/')

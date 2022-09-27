@@ -2,13 +2,15 @@
 {% block content %}
 <div class="container">
   <h1 class="">ブログアプリ</h1>
-  <form action="/signup">
+  <!-- <form action="/signup">
     <div><button type="submit" formmethod="POST">新規user登録ページへ</button></div>
-  </form>
+  </form> -->
+  <a href="/signup">新規user登録ページへ</a>
 </div>
-  <form class="evo" action="/login">
+<a href="/login">ログインページへ</a>
+  <!-- <form class="evo" action="/login">
     <button type="submit" formmethod="POST">ログインページへ</button>
-  </form>
+  </form> -->
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
