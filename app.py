@@ -35,10 +35,6 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(100))
 
-# class Display():
-#     l_user = ""
-#     e_comment = ""
-
 Display = {'username': '', 'エラーコメント': ''}
 
 @login_manager.user_loader
@@ -80,7 +76,8 @@ def do_signup():
         db.session.add(user)
         db.session.commit()
         # flash('登録に成功')
-        return render_template('login.html')
+        # return render_template('login.html')
+        return redirect(url_for('login'))
     else:
         # flash('登録に失敗')
         return redirect(url_for('logout'))
