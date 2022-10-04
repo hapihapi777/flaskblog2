@@ -8,10 +8,7 @@
   <!-- <a href="/logout">記事登録画面へ</a> -->
 </div>
 <div class="red">{{ username }}でログイン中</div>
-<!-- <form action="/create">
-  <input type="hidden" name="username" value="{{ username }}">
-  <button type="submit" formmethod="POST" style="margin-top: 8px;">記事登録画面</button>
-</form> -->
+
 <a href="/create">記事登録画面へ</a>
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}

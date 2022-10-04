@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>新規user登録ページ</h1>
+<div class="red">{{ comment }}</div>
 <form action="/do_signup" method="POST">
-<!-- <form action="/do_signup" method="POST"> -->
   <label for="">user名</label>
   <input type="text" name="register_user">
   <label for="">パスワード</label>
