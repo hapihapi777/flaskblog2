@@ -5,8 +5,19 @@
   <a href="/signup">新規user登録ページへ</a>
 </div>
 <a href="/login">ログインページへ</a>
-
 <hr>
+{% with messages = get_flashed_messages() %}
+  <!-- {% if messages %} -->
+    <!-- <ul class="flash"> -->
+      <!-- {% for message in messages %} -->
+      <!-- <li> -->
+        {{ message }}
+
+      <!-- </li> -->
+      <!-- {% endfor %} -->
+    <!-- </ul> -->
+  <!-- {% endif %} -->
+{% endwith %}
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
   <details>

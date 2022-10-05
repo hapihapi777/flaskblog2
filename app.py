@@ -1,6 +1,6 @@
-# from curses import flash
 import os, psycopg2, pytz
-from flask import Flask, render_template, request, make_response, session, redirect, url_for
+from turtle import pos
+from flask import Flask, render_template, request, make_response, session, redirect, url_for, flash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -45,6 +45,7 @@ def load_user(user_id):
 @app.route('/', methods=['GET', 'POST'])
 def blog():
     blogarticles = BlogArticle.query.all()
+    flash("Flashテスト")
     return render_template('index.html', blogarticles=blogarticles)
 
 # signupページに飛ぶだけ
@@ -64,14 +65,21 @@ def do_signup():
         username = request.form.get('register_user')
         password = request.form.get('register_pass')
         # Userのインスタンスを作成
-        user = User(username=username, password=generate_password_hash(password, method='sha256'))
-        db.session.add(user)
-        db.session.commit()
-        # flash('登録に成功')
-        return redirect(url_for('login'))
+        if username == "":
+            flash('登録に失敗')
+            return redirect(url_for('signup'))
+        elif password == "":
+            flash('登録に失敗')
+            return redirect(url_for('signup'))
+        else:
+            user = User(username=username, password=generate_password_hash(password, method='sha256'))
+            db.session.add(user)
+            db.session.commit()
+            # flash('登録に成功')
+            return redirect(url_for('login'))
     else:
-        # flash('登録に失敗')
-        return redirect(url_for('logout'))
+        flash('登録に失敗')
+        return redirect(url_for('signup'))
 
 # 登録済みのuserが入力された場合にのみmasterページに飛ぶ関数
 @app.route('/do_login', methods=['GET', 'POST'])
@@ -89,8 +97,8 @@ def do_login():
             res.set_cookie('l_username', username)
             return res
         else:
-            # flash('入力に失敗')
-            return render_template('/login.html')
+            flash('入力に失敗')
+            return redirect(url_for('login'))
     else:
         return redirect(url_for('logout'))
 
@@ -122,13 +130,16 @@ def do_create():
     if request.method == "POST":
         title = request.form.get('title')
         body = request.form.get('body')
-        if title == "":
-            return redirect(url_for('create'))
-        else:
+        if title != "" and body != "":
             blogarticle = BlogArticle(title=title, body=body)
             db.session.add(blogarticle)
             db.session.commit()
             return redirect(url_for('master'))
+        if title == "":
+            flash("タイトルが空欄です")
+        if body == "":
+            flash("記事が空欄です")
+        return redirect(url_for('create'))
     else:
         return redirect(url_for('logout'))
 
@@ -138,9 +149,13 @@ def do_create():
 @login_required
 def update():
     post_id = request.form.get("post_id")
+    # if request.cookies.get('post_id') != "":
+    #     post_id = request.cookies.get('post_id')
     blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
     l_username = request.cookies.get('l_username')
-    return render_template('update.html', blogarticle=blogarticle, username=l_username)
+    res = make_response(render_template('update.html', blogarticle=blogarticle, username=l_username))
+    res.set_cookie("post_id", post_id)
+    return res
 
 # updateページから更新する場合
 @app.route('/do_update', methods=['GET', 'POST'])
@@ -148,16 +163,28 @@ def update():
 def do_update():
     if request.method == "POST":
         post_id = request.form.get("post_id")
-        username = request.form.get('username')
+        
         blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
-        if request.form.get('title') == "":
-            return render_template('update.html', blogarticle=blogarticle, username=username, comment="＊タイトルを入れてください")
-        else:
-            blogarticle.title = request.form.get('title')
-            blogarticle.body = request.form.get('body')
+        title = request.form.get('title')
+        body = request.form.get('body')
+        if title != "" and body != "":
+            blogarticle = BlogArticle(title=title, body=body)
             db.session.add(blogarticle)
             db.session.commit()
             return redirect(url_for('master'))
+        if title == "":
+            flash("タイトルが空欄です")
+        if body == "":
+            flash("記事が空欄です")
+        return redirect(url_for('update'))
+        # if request.form.get('title') == "":
+        #     return render_template('update.html', blogarticle=blogarticle, username=username, comment="＊タイトルを入れてください")
+        # else:
+        #     blogarticle.title = request.form.get('title')
+        #     blogarticle.body = request.form.get('body')
+        #     db.session.add(blogarticle)
+        #     db.session.commit()
+        #     return redirect(url_for('master'))
     else:
         return redirect(url_for('logout'))
 

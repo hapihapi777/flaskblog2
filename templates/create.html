@@ -17,4 +17,16 @@
     <input type="hidden" name="username" value="{{ username }}">
     <input type="submit" value="新規登録">
 </form>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flash">
+      {% for message in messages %}
+      <li>
+        {{ message }}
+
+      </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 {% endblock %}
