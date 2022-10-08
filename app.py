@@ -1,15 +1,20 @@
 import os, psycopg2, pytz
-from turtle import pos
-from flask import Flask, render_template, request, make_response, session, redirect, url_for, flash
+# from turtle import pos
+from flask import (
+ Flask, render_template, request, make_response,
+ session,
+ redirect, url_for, flash
+)
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import timedelta 
  
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SECRET_KEY'] = "secret"
-
+app.permanent_session_lifetime = timedelta(minutes=3)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog2"
@@ -40,7 +45,7 @@ def load_user(user_id):
 
 
 
-
+# ---ログイン前ページ---
 # topページ
 @app.route('/', methods=['GET', 'POST'])
 def blog():
@@ -81,6 +86,8 @@ def do_signup():
         flash('登録に失敗')
         return redirect(url_for('signup'))
 
+
+
 # 登録済みのuserが入力された場合にのみmasterページに飛ぶ関数
 @app.route('/do_login', methods=['GET', 'POST'])
 def do_login():
@@ -91,8 +98,12 @@ def do_login():
         # Userテーブルからusernameに一致するユーザを取得
         user = User.query.filter_by(username=username).first()
 
+
         if check_password_hash(user.password, password):
             login_user(user)
+            session.permanent = True  
+            # l_user = request.form.get('username')
+            session["l_username"] = username
             res = make_response(redirect(url_for('master')))
             res.set_cookie('l_username', username)
             return res
@@ -105,7 +116,7 @@ def do_login():
 
 
 
-
+# ---ログイン後ページ---
 # 編集可能なmasterページにPOSTで来た場合(正常動作)とそれ以外に設定
 @app.route('/master', methods=['GET', 'POST'])
 @login_required
@@ -149,8 +160,6 @@ def do_create():
 @login_required
 def update():
     post_id = request.form.get("post_id")
-    # if request.cookies.get('post_id') != "":
-    #     post_id = request.cookies.get('post_id')
     blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).one()
     l_username = request.cookies.get('l_username')
     res = make_response(render_template('update.html', blogarticle=blogarticle, username=l_username))
@@ -206,6 +215,8 @@ def delete():
 @login_required
 def logout():
     logout_user()
+    session.pop('username', None)
+    session.clear()
     res = make_response(redirect(url_for('blog')))
     res.delete_cookie('l_username')
     return res
