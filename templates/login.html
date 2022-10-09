@@ -9,15 +9,12 @@
   <input type="submit" value="ログイン">
 </form>
 {% with messages = get_flashed_messages() %}
-  <!-- {% if messages %} -->
-    <!-- <ul class="flash"> -->
-      <!-- {% for message in messages %} -->
-      <!-- <li> -->
-        {{ message }}
-
-      <!-- </li> -->
-      <!-- {% endfor %} -->
-    <!-- </ul> -->
-  <!-- {% endif %} -->
+  {% if messages %}
+    <ul class="flash">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endwith %}
 {% endblock %}

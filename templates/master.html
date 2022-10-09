@@ -5,11 +5,11 @@
   <form action="/logout">
     <button type="submit" formmethod="POST">ログアウト</button>
   </form>
-  <!-- <a href="/logout">記事登録画面へ</a> -->
 </div>
 <div class="red">{{ username }}でログイン中</div>
 
 <a href="/create">記事登録画面へ</a>
+<!-- <a href="/">記事登録画面へ</a> -->
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
@@ -19,12 +19,10 @@
     <div class="container">
       <form action="/update" class="inline" >
         <input type="hidden" name="post_id" value="{{ blogarticle.id }}">
-        <input type="hidden" name="username" value="{{ username }}">
         <button type="submit" formmethod="POST">編集</button>
       </form>
       <form action="/delete">
         <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
-        <input type="hidden" name="username" value="{{ username }}">
         <button type="submit" formmethod="POST">削除</button>
       </form>
     </div>
