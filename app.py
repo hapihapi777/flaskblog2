@@ -1,5 +1,6 @@
 import os, psycopg2, pytz
 # from turtle import pos
+# import datetime
 from flask import (
  Flask, render_template, request, make_response,
  session,
@@ -8,8 +9,8 @@ from flask import (
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta 
+from werkzeug.security import generate_password_hash, check_password_hash
  
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
@@ -47,6 +48,7 @@ def load_user(user_id):
 
 # ---ログイン前ページ---
 # topページ
+# logoutの時にPOSTで来る為POST残し
 @app.route('/', methods=['GET', 'POST'])
 def blog():
     blogarticles = BlogArticle.query.all()
@@ -129,8 +131,10 @@ def master():
 @login_required
 def create():
     l_username = request.cookies.get('l_username')
+    today = datetime.today()
+    day_of_week = ("月", "火", "水", "木", "金", "土", "日")
     return render_template('create.html', 
-    username=l_username
+    username=l_username, today=today, day_of_week=day_of_week
     )
 
 # 新規作成メソッド
