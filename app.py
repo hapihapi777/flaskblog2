@@ -131,7 +131,7 @@ def master():
 @login_required
 def create():
     l_username = request.cookies.get('l_username')
-    today = datetime.today()
+    today = datetime.now(pytz.timezone('Asia/Tokyo'))
     day_of_week = ("月", "火", "水", "木", "金", "土", "日")
     return render_template('create.html', 
     username=l_username, today=today, day_of_week=day_of_week
