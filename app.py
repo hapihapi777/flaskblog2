@@ -16,8 +16,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
-# app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SECRET_KEY'] = "abcdefghijklmn"
+app.config['SECRET_KEY'] = os.urandom(24)
+# app.config['SECRET_KEY'] = "abcdefghijklmn"
 bootstrap = Bootstrap(app)
 app.permanent_session_lifetime = timedelta(minutes=60)
 
@@ -137,7 +137,7 @@ def master():
 @login_required
 def create():
     l_username = request.cookies.get('l_username')
-    today = datetime.now(pytz.timezone('Asia/Tokyo'))
+    today = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
 
     day_of_week = ("月", "火", "水", "木", "金", "土", "日")
     return render_template('create.html', 
@@ -160,7 +160,7 @@ def do_create():
                 stream = request.files['img'].stream
                 img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
                 img = cv2.imdecode(img_array, 1)
-                dt_now = datetime.now(pytz.timezone('Asia/Tokyo'))
+                dt_now = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
                 img_path = img_dir + str(dt_now) + ".jpg"
                 cv2.imwrite(img_path, img)
             else:
