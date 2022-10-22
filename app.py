@@ -9,7 +9,7 @@ import psycopg2
 import pytz
 from flask import (Flask, flash, make_response, redirect, render_template,
                    request, session, url_for)
-from flask_bootstrap import Bootstrap
+# from flask_bootstrap import Bootstrap
 from flask_login import (LoginManager, UserMixin, login_required, login_user,
                          logout_user)
 from flask_sqlalchemy import SQLAlchemy
@@ -18,7 +18,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SECRET_KEY'] = "abcdefghijklmn"
-bootstrap = Bootstrap(app)
+# bootstrap = Bootstrap(app)
 app.permanent_session_lifetime = timedelta(minutes=60)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
