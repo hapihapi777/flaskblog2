@@ -3,3 +3,4 @@ __pycache__/
 *.js
 *.db
 memo.txt
+.vscode/

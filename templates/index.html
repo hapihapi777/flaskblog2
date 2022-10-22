@@ -10,21 +10,21 @@
 <!-- <a href="">ログインページへ</a> -->
 <hr>
 {% with messages = get_flashed_messages() %}
-  <!-- {% if messages %} -->
-    <!-- <ul class="flash"> -->
-      <!-- {% for message in messages %} -->
-      <!-- <li> -->
-        {{ message }}
-      <!-- </li> -->
-      <!-- {% endfor %} -->
-    <!-- </ul> -->
-  <!-- {% endif %} -->
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
 {% endwith %}
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
   <details>
-    <summary class="red">{{ blogarticle.title }}</summary>
+    <summary class="red title">{{ blogarticle.title }}</summary>
     <p>{{ blogarticle.body }}</p>
+    {% if blogarticle.img_path %}
+    <div>
+      <img src="{{ blogarticle.img_path }}" style="width: 200px;">
+    </div>
+    <!-- <p>{{ blogarticle.img_path }}</p> -->
+    {% endif %}
   </details>
 </article>
 <hr>

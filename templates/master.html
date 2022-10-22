@@ -14,15 +14,20 @@
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
   <details>
-    <summary class="red">{{ blogarticle.title }}</summary>
+    <summary class="red title">{{ blogarticle.title }}</summary>
     <p>{{ blogarticle.body }}</p>
+    {% if blogarticle.img_path %}
+    <div>
+      <img src="{{ blogarticle.img_path }}" style="width: 200px;">
+    </div>
+    {% endif %}
     <div class="container">
       <form action="/update" class="inline" >
-        <input type="hidden" name="post_id" value="{{ blogarticle.id }}">
+        <input type="hidden" name="blog_id" value="{{ blogarticle.id }}">
         <button type="submit" formmethod="POST">編集</button>
       </form>
       <form action="/delete">
-        <input type="hidden" name="post_id" value="{{ blogarticle.id }}" id="">
+        <input type="hidden" name="blog_id" value="{{ blogarticle.id }}" id="">
         <button type="submit" formmethod="POST">削除</button>
       </form>
     </div>

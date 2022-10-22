@@ -1,30 +1,34 @@
-import os, psycopg2, pytz
+import os
+from datetime import datetime, timedelta
+
 # from turtle import pos
 # import datetime
-from flask import (
- Flask, render_template, request, make_response,
- session,
- redirect, url_for, flash
-)
-from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
+import cv2
+import numpy as np
+import psycopg2
+import pytz
+from flask import (Flask, flash, make_response, redirect, render_template,
+                   request, session, url_for)
+from flask_bootstrap import Bootstrap
+from flask_login import (LoginManager, UserMixin, login_required, login_user,
+                         logout_user)
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from datetime import timedelta 
-from werkzeug.security import generate_password_hash, check_password_hash
- 
+from werkzeug.security import check_password_hash, generate_password_hash
+
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SECRET_KEY'] = "abcdefghijklmn"
-app.permanent_session_lifetime = timedelta(minutes=3)
+bootstrap = Bootstrap(app)
+app.permanent_session_lifetime = timedelta(minutes=60)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog2"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 db = SQLAlchemy(app)
 
+# ログイン用
 login_manager = LoginManager()
 login_manager.init_app(app)
-# ログイン用
 
 class BlogArticle(db.Model):
     __tablename__ = "article"
@@ -32,6 +36,7 @@ class BlogArticle(db.Model):
     title = db.Column(db.Text, nullable=False)
     body = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('Asia/Tokyo')))
+    img_path = db.Column(db.Text, nullable=True)
   
 class User(UserMixin, db.Model):
     __tablename__ = "signup"
@@ -52,7 +57,7 @@ def load_user(user_id):
 @app.route('/', methods=['GET', 'POST'])
 def blog():
     blogarticles = BlogArticle.query.all()
-    flash("Flashテスト")
+    # flash("Flashテスト")
     return render_template('index.html', blogarticles=blogarticles)
 
 # signupページに飛ぶだけ
@@ -122,6 +127,7 @@ def do_login():
 def master():
     l_username = request.cookies.get('l_username')
     blogarticles = BlogArticle.query.all()
+    # img_path = BlogArticle.img_path
     return render_template('/master.html', blogarticles=blogarticles, username=l_username)
 
 
@@ -132,6 +138,7 @@ def master():
 def create():
     l_username = request.cookies.get('l_username')
     today = datetime.now(pytz.timezone('Asia/Tokyo'))
+
     day_of_week = ("月", "火", "水", "木", "金", "土", "日")
     return render_template('create.html', 
     username=l_username, today=today, day_of_week=day_of_week
@@ -143,10 +150,22 @@ def create():
 @login_required
 def do_create():
     if request.method == "POST":
+        
         title = request.form.get('title')
         body = request.form.get('body')
-        if title != "" and body != "":
-            blogarticle = BlogArticle(title=title, body=body)
+        
+        if title != "" and body != "": # タイトルと記事が空欄じゃなかった場合
+            if str(request.files['img']) != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
+                img_dir = "static/images/"
+                stream = request.files['img'].stream
+                img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
+                img = cv2.imdecode(img_array, 1)
+                dt_now = datetime.now(pytz.timezone('Asia/Tokyo'))
+                img_path = img_dir + str(dt_now) + ".jpg"
+                cv2.imwrite(img_path, img)
+            else:
+                img_path=None
+            blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
             db.session.commit()
             return redirect(url_for('master'))
@@ -163,11 +182,11 @@ def do_create():
 @app.route('/update', methods=['GET', 'POST'])
 @login_required
 def update():
-    post_id = request.form.get("post_id")
-    blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).first()
+    blog_id = request.form.get("blog_id")
+    blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
     l_username = request.cookies.get('l_username')
     res = make_response(render_template('update.html', blogarticle=blogarticle, username=l_username))
-    # res.set_cookie("post_id", post_id)
+    # res.set_cookie("blog_id", blog_id)
     return res
 
 # updateページから更新する場合
@@ -176,9 +195,9 @@ def update():
 @login_required
 def do_update():
     if request.method == "POST":
-        post_id = request.form.get("post_id")
+        blog_id = request.form.get("blog_id")
         
-        blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).first()
+        blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
         title = request.form.get('title')
         body = request.form.get('body')
         if title != "" and body != "":
@@ -203,8 +222,8 @@ def do_update():
 @login_required
 def delete():
     if request.method == "POST":
-        post_id = request.form.get("post_id")
-        blogarticle = BlogArticle.query.filter(BlogArticle.id == post_id).first()
+        blog_id = request.form.get("blog_id")
+        blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
         db.session.delete(blogarticle)
         db.session.commit()
         return redirect(url_for('master'))
@@ -222,5 +241,5 @@ def logout():
     session.clear()
     res = make_response(redirect(url_for('blog')))
     res.delete_cookie('l_username')
-    res.delete_cookie('post_id')
+    res.delete_cookie('blog_id')
     return res

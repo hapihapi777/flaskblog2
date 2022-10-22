@@ -4,7 +4,7 @@
     <h1>記事登録画面</h1>
     <div class="red">{{ username }}でログイン中</div>
 </div>
-<form action="do_create" method="POST">
+<form enctype="multipart/form-data" action="do_create" method="POST">
     <label for="title">タイトル</label>
     <br>
     <input type="text" name="title" value="{{ today.strftime('%m/%d') }}({{ day_of_week[today.weekday()] }})">
@@ -15,7 +15,19 @@
     <br>
     <input type="hidden" name="username" value="{{ username }}">
     <input type="submit" value="新規登録">
+    <input type="file" name="img">
 </form>
+<!-- 画像保存用 -->
+<!-- <form enctype="multipart/form-data">
+  <input type="file" name="img">
+  <button type="submit" formmethod="post">POST</button></p>
+  {% if img_path %}
+  <div>
+    <img src="{{ img_path }}" style="width: 200px;">
+  </div>
+  <p>{{ img_path }}</p>
+  {% endif %}
+</form> -->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class="flash">

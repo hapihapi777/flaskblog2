@@ -49,3 +49,7 @@ summary::-webkit-details-marker {
 .red {
   color: red;
 }
+
+.title {
+  background-color: #ffffdd;
+}
