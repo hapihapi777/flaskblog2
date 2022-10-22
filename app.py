@@ -57,7 +57,7 @@ def load_user(user_id):
 @app.route('/', methods=['GET', 'POST'])
 def blog():
     blogarticles = BlogArticle.query.all()
-    # flash("Flashテスト")
+    flash("Flashテスト")
     return render_template('index.html', blogarticles=blogarticles)
 
 # signupページに飛ぶだけ
