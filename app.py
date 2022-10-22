@@ -16,8 +16,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
-# app.config['SECRET_KEY'] = "abcdefghijklmn"
+# app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = "abcdefghijklmn"
 bootstrap = Bootstrap(app)
 app.permanent_session_lifetime = timedelta(minutes=60)
 
