@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 # from turtle import pos
 # import datetime
-import cv2
+# import cv2
 import numpy as np
 import psycopg2
 import pytz
@@ -155,16 +155,16 @@ def do_create():
         body = request.form.get('body')
         
         if title != "" and body != "": # タイトルと記事が空欄じゃなかった場合
-            if str(request.files['img']) != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
-                img_dir = "static/images/"
-                stream = request.files['img'].stream
-                img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
-                img = cv2.imdecode(img_array, 1)
-                dt_now = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
-                img_path = img_dir + str(dt_now) + ".jpg"
-                cv2.imwrite(img_path, img)
-            else:
-                img_path=None
+        #     if str(request.files['img']) != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
+        #         img_dir = "static/images/"
+        #         stream = request.files['img'].stream
+        #         img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
+        #         img = cv2.imdecode(img_array, 1)
+        #         dt_now = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
+        #         img_path = img_dir + str(dt_now) + ".jpg"
+        #         cv2.imwrite(img_path, img)
+        #     else:
+            img_path=None
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
             db.session.commit()
