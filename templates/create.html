@@ -18,16 +18,7 @@
     <input type="file" name="img">
 </form>
 <!-- 画像保存用 -->
-<!-- <form enctype="multipart/form-data">
-  <input type="file" name="img">
-  <button type="submit" formmethod="post">POST</button></p>
-  {% if img_path %}
-  <div>
-    <img src="{{ img_path }}" style="width: 200px;">
-  </div>
-  <p>{{ img_path }}</p>
-  {% endif %}
-</form> -->
+
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class="flash">
