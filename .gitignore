@@ -4,3 +4,4 @@ __pycache__/
 *.db
 memo.txt
 .vscode/
+heroku.yml
