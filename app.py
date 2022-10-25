@@ -14,6 +14,7 @@ from flask_login import (LoginManager, UserMixin, login_required, login_user,
                          logout_user)
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
@@ -164,7 +165,12 @@ def do_create():
         #         img_path = img_dir + str(dt_now) + ".jpg"
         #         cv2.imwrite(img_path, img)
         #     else:
-            img_path=None
+            file = request.files['img']
+            save_filename = secure_filename(file.filename)
+            file.save(os.path.join('./static/images', save_filename))
+
+            img_path = "static/images/" + save_filename
+            # img_path=None
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
             db.session.commit()
