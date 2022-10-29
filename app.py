@@ -167,9 +167,10 @@ def do_create():
         #     else:
             file = request.files['img']
             save_filename = secure_filename(file.filename)
-            file.save(os.path.join('./static/images', save_filename))
+            img_path = MakePath(save_filename)
 
-            img_path = "static/images/" + save_filename
+            file.save(img_path)
+            
             # img_path=None
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
@@ -249,3 +250,11 @@ def logout():
     res.delete_cookie('l_username')
     res.delete_cookie('blog_id')
     return res
+
+def MakePath(f_name):
+    root, extension = os.path.splitext(f_name)
+    img_dir = "static/images/"
+    dt_now = generate_password_hash(datetime.now().strftime("%Y%m%d%H%M%S%f"), method='sha256')
+    result = img_dir + dt_now + extension
+
+    return result
