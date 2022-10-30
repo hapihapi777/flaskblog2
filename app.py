@@ -231,6 +231,8 @@ def delete():
     if request.method == "POST":
         blog_id = request.form.get("blog_id")
         blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
+        img_path = blogarticle.img_path
+        os.remove(img_path)
         db.session.delete(blogarticle)
         db.session.commit()
         return redirect(url_for('master'))
