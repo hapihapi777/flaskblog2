@@ -156,21 +156,20 @@ def do_create():
         body = request.form.get('body')
         
         if title != "" and body != "": # タイトルと記事が空欄じゃなかった場合
-        #     if str(request.files['img']) != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
-        #         img_dir = "static/images/"
-        #         stream = request.files['img'].stream
-        #         img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
-        #         img = cv2.imdecode(img_array, 1)
-        #         dt_now = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
-        #         img_path = img_dir + str(dt_now) + ".jpg"
-        #         cv2.imwrite(img_path, img)
-        #     else:
             file = request.files['img']
-            save_filename = secure_filename(file.filename)
-            img_path = MakePath(save_filename)
-
-            file.save(img_path)
-            
+            if str(request.files['img']) != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
+                # img_dir = "static/images/"
+                # stream = request.files['img'].stream
+                # img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
+                # img = cv2.imdecode(img_array, 1)
+                # dt_now = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
+                # img_path = img_dir + str(dt_now) + ".jpg"
+                # cv2.imwrite(img_path, img)
+                save_filename = secure_filename(file.filename)
+                img_path = MakePath(save_filename)
+                file.save(img_path)
+            else:
+                img_path = "None"
             # img_path=None
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
@@ -231,8 +230,11 @@ def delete():
     if request.method == "POST":
         blog_id = request.form.get("blog_id")
         blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
+
         img_path = blogarticle.img_path
-        os.remove(img_path)
+        if img_path != "None":
+            os.remove(img_path)
+
         db.session.delete(blogarticle)
         db.session.commit()
         return redirect(url_for('master'))
