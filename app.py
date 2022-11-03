@@ -232,7 +232,7 @@ def delete():
         blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
 
         img_path = blogarticle.img_path
-        if img_path != "":
+        if img_path != "" or None:
             os.remove(img_path)
 
         db.session.delete(blogarticle)
