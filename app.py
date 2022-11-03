@@ -169,7 +169,7 @@ def do_create():
                 img_path = MakePath(save_filename)
                 file.save(img_path)
             else:
-                img_path = "None"
+                img_path = ""
             # img_path=None
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
@@ -232,7 +232,7 @@ def delete():
         blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
 
         img_path = blogarticle.img_path
-        if img_path != "None":
+        if img_path != "":
             os.remove(img_path)
 
         db.session.delete(blogarticle)
