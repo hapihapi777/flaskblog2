@@ -231,9 +231,10 @@ def delete():
         blog_id = request.form.get("blog_id")
         blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
 
-        img_path = blogarticle.img_path
-        if img_path != "" or None:
-            os.remove(img_path)
+        # ファイル削除用(現状エラーの原因)
+        # img_path = blogarticle.img_path
+        # if img_path != "" or img_path != "None" or img_path != None:
+        #     os.remove(img_path)
 
         db.session.delete(blogarticle)
         db.session.commit()
