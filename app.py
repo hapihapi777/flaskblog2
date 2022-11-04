@@ -1,3 +1,4 @@
+import imghdr
 import os
 from datetime import datetime, timedelta
 
@@ -6,6 +7,7 @@ from datetime import datetime, timedelta
 # import cv2
 import numpy as np
 import psycopg2
+import pyrebase
 import pytz
 from flask import (Flask, flash, make_response, redirect, render_template,
                    request, session, url_for)
@@ -26,6 +28,21 @@ app.permanent_session_lifetime = timedelta(minutes=60)
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/fblog2"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 db = SQLAlchemy(app)
+
+# firebaseの情報
+firebaseConfig = {
+    "apiKey": "AIzaSyAdt2j0uT0YGcq87m2rvofd2g8-aDK9Zb4",
+    "authDomain": "fblog-fefe7.firebaseapp.com",
+    "databaseURL": "https://fblog-fefe7-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "projectId": "fblog-fefe7",
+    "storageBucket": "fblog-fefe7.appspot.com",
+    "messagingSenderId": "873652729264",
+    "appId": "1:873652729264:web:82e751d3cee73766725275",
+    "measurementId": "G-80Z5FM1RFP"
+  }
+
+firebase = pyrebase.initialize_app(firebaseConfig)
+storage = firebase.storage()
 
 # ログイン用
 login_manager = LoginManager()
@@ -155,9 +172,16 @@ def do_create():
         title = request.form.get('title')
         body = request.form.get('body')
         
-        if title != "" and body != "": # タイトルと記事が空欄じゃなかった場合
+        if title != "" and body != "": # タイトルと記事空欄じゃなかった場合
+            # image = request.files['image']
             file = request.files['img']
-            if str(request.files['img']) != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
+            imageDecision = imghdr.what(file)
+            if imageDecision is None:
+                img_path = ""
+            else:
+                # file = str(file)
+                # if file != "": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
+                # if file != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
                 # img_dir = "static/images/"
                 # stream = request.files['img'].stream
                 # img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
@@ -165,12 +189,16 @@ def do_create():
                 # dt_now = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
                 # img_path = img_dir + str(dt_now) + ".jpg"
                 # cv2.imwrite(img_path, img)
-                save_filename = secure_filename(file.filename)
-                img_path = MakePath(save_filename)
-                file.save(img_path)
-            else:
-                img_path = ""
-            # img_path=None
+
+                # save_filename = secure_filename(file.filename)
+                # img_path = MakePath(save_filename)
+                # file.save(img_path)
+
+                dt_now = datetime.now().strftime("%Y%m%d%H%M%S%f")
+                storage.child(dt_now).put(file)
+
+                img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/" + str(dt_now) + "?alt=media"
+
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
             db.session.commit()
@@ -233,8 +261,9 @@ def delete():
 
         # ファイル削除用(現状エラーの原因)
         # img_path = blogarticle.img_path
-        # if img_path != "" or img_path != "None" or img_path != None:
-        #     os.remove(img_path)
+        # if blogarticle.img_path != "":
+        # #  or img_path != "None" or img_path != None:
+        #     os.remove(blogarticle.img_path)
 
         db.session.delete(blogarticle)
         db.session.commit()
@@ -256,10 +285,10 @@ def logout():
     res.delete_cookie('blog_id')
     return res
 
-def MakePath(f_name):
-    root, extension = os.path.splitext(f_name)
-    img_dir = "static/images/"
-    dt_now = generate_password_hash(datetime.now().strftime("%Y%m%d%H%M%S%f"), method='sha256')
-    result = img_dir + dt_now + extension
+# def MakePath(f_name):
+#     root, extension = os.path.splitext(f_name)
+#     img_dir = "static/images/"
+#     dt_now = generate_password_hash(datetime.now().strftime("%Y%m%d%H%M%S%f"), method='sha256')
+#     result = img_dir + dt_now + extension
 
-    return result
+#     return result
