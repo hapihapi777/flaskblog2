@@ -1,12 +1,12 @@
 import imghdr
-import os
+# import os
 from datetime import datetime, timedelta
 
 # from turtle import pos
 # import datetime
 # import cv2
-import numpy as np
-import psycopg2
+# import numpy as np
+# import psycopg2
 import pyrebase
 import pytz
 from flask import (Flask, flash, make_response, redirect, render_template,
@@ -16,7 +16,8 @@ from flask_login import (LoginManager, UserMixin, login_required, login_user,
                          logout_user)
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.utils import secure_filename
+
+# from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
