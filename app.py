@@ -1,14 +1,16 @@
 import imghdr
 # import os
-from datetime import datetime, timedelta
+import urllib3
+
 
 # from turtle import pos
-# import datetime
+import datetime
 # import cv2
 # import numpy as np
-# import psycopg2
+import psycopg2
 import pyrebase
 import pytz
+from datetime import datetime, timedelta
 from flask import (Flask, flash, make_response, redirect, render_template,
                    request, session, url_for)
 # from flask_bootstrap import Bootstrap
@@ -19,20 +21,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 # from werkzeug.utils import secure_filename
 
-# firebaseの情報
-firebaseConfig = {
-    "apiKey": "AIzaSyAdt2j0uT0YGcq87m2rvofd2g8-aDK9Zb4",
-    "authDomain": "fblog-fefe7.firebaseapp.com",
-    "databaseURL": "https://fblog-fefe7-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "projectId": "fblog-fefe7",
-    "storageBucket": "fblog-fefe7.appspot.com",
-    "messagingSenderId": "873652729264",
-    "appId": "1:873652729264:web:82e751d3cee73766725275",
-    "measurementId": "G-80Z5FM1RFP"
-  }
-
-firebase = pyrebase.initialize_app(firebaseConfig)
-storage = firebase.storage()
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
@@ -62,8 +50,22 @@ class User(UserMixin, db.Model):
     __tablename__ = "signup"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(12), nullable=False, unique=True)
 
+# firebaseの情報
+firebaseConfig = {
+    "apiKey": "AIzaSyAdt2j0uT0YGcq87m2rvofd2g8-aDK9Zb4",
+    "authDomain": "fblog-fefe7.firebaseapp.com",
+    "databaseURL": "https://fblog-fefe7-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "projectId": "fblog-fefe7",
+    "storageBucket": "fblog-fefe7.appspot.com",
+    "messagingSenderId": "873652729264",
+    "appId": "1:873652729264:web:82e751d3cee73766725275",
+    "measurementId": "G-80Z5FM1RFP"
+  }
+
+firebase = pyrebase.initialize_app(firebaseConfig)
+storage = firebase.storage()
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -4,4 +4,4 @@ __pycache__/
 *.db
 memo.txt
 .vscode/
-.yml
+*.yml
