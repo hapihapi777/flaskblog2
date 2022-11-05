@@ -19,6 +19,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 # from werkzeug.utils import secure_filename
 
+
+
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SECRET_KEY'] = "abcdefghijklmn"
@@ -30,20 +32,6 @@ app.permanent_session_lifetime = timedelta(minutes=60)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 db = SQLAlchemy(app)
 
-# firebaseの情報
-firebaseConfig = {
-    "apiKey": "AIzaSyAdt2j0uT0YGcq87m2rvofd2g8-aDK9Zb4",
-    "authDomain": "fblog-fefe7.firebaseapp.com",
-    "databaseURL": "https://fblog-fefe7-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "projectId": "fblog-fefe7",
-    "storageBucket": "fblog-fefe7.appspot.com",
-    "messagingSenderId": "873652729264",
-    "appId": "1:873652729264:web:82e751d3cee73766725275",
-    "measurementId": "G-80Z5FM1RFP"
-  }
-
-firebase = pyrebase.initialize_app(firebaseConfig)
-storage = firebase.storage()
 
 # ログイン用
 login_manager = LoginManager()
@@ -194,6 +182,20 @@ def do_create():
                 # save_filename = secure_filename(file.filename)
                 # img_path = MakePath(save_filename)
                 # file.save(img_path)
+                # firebaseの情報
+                firebaseConfig = {
+                    "apiKey": "AIzaSyAdt2j0uT0YGcq87m2rvofd2g8-aDK9Zb4",
+                    "authDomain": "fblog-fefe7.firebaseapp.com",
+                    "databaseURL": "https://fblog-fefe7-default-rtdb.asia-southeast1.firebasedatabase.app",
+                    "projectId": "fblog-fefe7",
+                    "storageBucket": "fblog-fefe7.appspot.com",
+                    "messagingSenderId": "873652729264",
+                    "appId": "1:873652729264:web:82e751d3cee73766725275",
+                    "measurementId": "G-80Z5FM1RFP"
+                }
+
+                firebase = pyrebase.initialize_app(firebaseConfig)
+                storage = firebase.storage()
 
                 dt_now = datetime.now().strftime("%Y%m%d%H%M%S%f")
                 storage.child(dt_now).put(file)
