@@ -5,3 +5,5 @@ __pycache__/
 memo.txt
 .vscode/
 *.yml
+flaskblog2.code-workspace
+static/css/bootstrap.min.css

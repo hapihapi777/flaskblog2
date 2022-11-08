@@ -1,12 +1,12 @@
 import imghdr
 # import os
-import urllib3
+# import urllib3
 # from turtle import pos
 import datetime
 # import cv2
 # import numpy as np
 import psycopg2
-import pyrebase
+# import pyrebase
 import pytz
 from datetime import datetime, timedelta
 from flask import (Flask, flash, make_response, redirect, render_template,
@@ -161,9 +161,7 @@ def create():
     today = datetime.now(pytz.timezone('Asia/Tokyo'))
 
     day_of_week = ("月", "火", "水", "木", "金", "土", "日")
-    return render_template('create.html', 
-    username=l_username, today=today, day_of_week=day_of_week
-    )
+    return render_template('create.html', username=l_username, today=today, day_of_week=day_of_week)
 
 # 新規作成メソッド
 # データを扱う作業なので、接続中でもPOSTメソッドのみ
