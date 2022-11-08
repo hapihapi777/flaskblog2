@@ -4,9 +4,9 @@
 <div class="red">{{ comment }}</div>
 <form action="/do_signup" method="POST">
   <label for="">user名</label>
-  <input type="text" name="register_user">
+  <input type="text" name="register_user" maxlength="20">
   <label for="">パスワード</label>
-  <input type="password" name="register_pass" maxlength="8">
+  <input type="password" name="register_pass" maxlength="12">
   <input type="submit" value="新規登録">
 </form>
 {% with messages = get_flashed_messages() %}

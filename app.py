@@ -49,7 +49,7 @@ class User(UserMixin, db.Model):
     __tablename__ = "signup"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(12), nullable=False)
+    password = db.Column(db.String(256), nullable=False)
 
 # firebaseの情報
 # firebaseConfig = {
@@ -98,6 +98,8 @@ def do_signup():
         username = request.form.get('register_user')
         password = request.form.get('register_pass')
         if username != "" and password != "":
+            username = str(username)
+            password = str(password)
             # Userのインスタンスを作成
             user = User(username=username, password=generate_password_hash(password, method='sha256'))
             db.session.add(user)
