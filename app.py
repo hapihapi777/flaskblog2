@@ -6,7 +6,7 @@ import datetime
 # import cv2
 # import numpy as np
 import psycopg2
-import pyrebase
+# import pyrebase
 import pytz
 from datetime import datetime, timedelta
 from flask import (Flask, flash, make_response, redirect, render_template,
@@ -52,19 +52,19 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(256), nullable=False)
 
 # firebaseの情報
-firebaseConfig = {
-    "apiKey": "AIzaSyAdt2j0uT0YGcq87m2rvofd2g8-aDK9Zb4",
-    "authDomain": "fblog-fefe7.firebaseapp.com",
-    "databaseURL": "https://fblog-fefe7-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "projectId": "fblog-fefe7",
-    "storageBucket": "fblog-fefe7.appspot.com",
-    "messagingSenderId": "873652729264",
-    "appId": "1:873652729264:web:82e751d3cee73766725275",
-    "measurementId": "G-80Z5FM1RFP"
-  }
+# firebaseConfig = {
+#     "apiKey": "AIzaSyAdt2j0uT0YGcq87m2rvofd2g8-aDK9Zb4",
+#     "authDomain": "fblog-fefe7.firebaseapp.com",
+#     "databaseURL": "https://fblog-fefe7-default-rtdb.asia-southeast1.firebasedatabase.app",
+#     "projectId": "fblog-fefe7",
+#     "storageBucket": "fblog-fefe7.appspot.com",
+#     "messagingSenderId": "873652729264",
+#     "appId": "1:873652729264:web:82e751d3cee73766725275",
+#     "measurementId": "G-80Z5FM1RFP"
+#   }
 
-firebase = pyrebase.initialize_app(firebaseConfig)
-storage = firebase.storage()
+# firebase = pyrebase.initialize_app(firebaseConfig)
+# storage = firebase.storage()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -198,7 +198,7 @@ def do_create():
                 # file.save(img_path)
 
                 dt_now = datetime.now().strftime("%Y%m%d%H%M%S%f")
-                storage.child(dt_now).put(file)
+                # storage.child(dt_now).put(file)
 
                 img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/" + str(dt_now) + "?alt=media"
 
