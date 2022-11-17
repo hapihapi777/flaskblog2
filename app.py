@@ -293,7 +293,7 @@ def GetNow():
 
 def GetExtension(f_name):
     # f_name = os.path.basename(str(f_name))
-    root, extension = os.path.splitext(f_name)
+    root, extension = os.path.splitext(str(f_name))
     result = "0maime" + extension
     # return extension
     return result
