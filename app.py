@@ -1,5 +1,6 @@
 import imghdr
 import os
+import os.path
 import shutil
 # import urllib3
 # from turtle import pos
@@ -178,32 +179,22 @@ def do_create():
         if title != "" and body != "": # タイトルと記事空欄じゃなかった場合
             # image = request.files['image']
             file = request.files['img']
+            # filename = GetExtension(file)
             imageDecision = imghdr.what(file)
             if imageDecision is None:
                 img_path = ""
             else:
-                # file = str(file)
-                # if file != "": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
-                # if file != "<FileStorage: '' ('application/octet-stream')>": #imgが空欄じゃなかった場合、アップロードする(無理矢理設定した)
-                # img_dir = "static/images/"
-                # stream = request.files['img'].stream
-                # img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
-                # img = cv2.imdecode(img_array, 1)
-                # dt_now = datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%Y%m%d%H%M%S%f")
-                # img_path = img_dir + str(dt_now) + ".jpg"
-                # cv2.imwrite(img_path, img)
-
                 # save_filename = secure_filename(file.filename)
                 # img_path = MakePath(save_filename)
                 # file.save(img_path)
-                filename = str(file)
-                root, extension = os.path.splitext(filename)
-                dt_now = '/' + str(GetNow().strftime("%Y%m%d%H%M%S%f")) + '/' + str(extension)
-                
-                storage.child(dt_now).put(file)
-                # img_path = storage.child(dt_now).get_url(token=None)
-
-                img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/" + dt_now + "?alt=media"
+                # filename = imageDecision
+                filename = GetExtension(file)
+                # root, extension = os.path.splitext(filename)
+                dt_now = str(GetNow().strftime("%Y%m%d%H%M%S%f"))
+                basyo = 'images/' + dt_now + '/' + filename
+                storage.child(basyo).put(file)
+                # img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images%2F" + dt_now + "%2F0?alt=media"
+                img_path = storage.child(basyo).get_url(token=None)
 
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
@@ -271,7 +262,7 @@ def delete():
         #  or img_path != "None" or img_path != None:
             # path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/img_delete%2F%E3%81%82%E3%81%82%E3%81%82.jpg?alt=media&token=7ffb62e6-5ef8-442b-96bd-d68890c448f2"
             # os.remove(path)
-            storage.child('img_delete').remove()
+            storage.child('images/').remove()
             # os.remove("https://console.firebase.google.com/project/fblog-fefe7/storage/fblog-fefe7.appspot.com/files/~2Fimg_delete?hl=ja/fblog-fefe7.appspot.com/img_delete/あああ.jpg")
             # shutil.rmtree('img_delete/') #ディレクトリの中身を消す https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/img_delete/
             # # https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/
@@ -300,13 +291,18 @@ def GetNow():
     result = datetime.now(pytz.timezone('Asia/Tokyo'))
     return result
 
+def GetExtension(f_name):
+    # f_name = os.path.basename(str(f_name))
+    root, extension = os.path.splitext(f_name)
+    result = "0maime" + extension
+    # return extension
+    return result
 
 # def MakePath(f_name):
 #     root, extension = os.path.splitext(f_name)
 #     img_dir = "static/images/"
 #     dt_now = generate_password_hash(datetime.now().strftime("%Y%m%d%H%M%S%f"), method='sha256')
 #     result = img_dir + dt_now + extension
-
 #     return result
 
 if __name__ == "__main__":
