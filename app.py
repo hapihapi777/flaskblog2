@@ -1,5 +1,6 @@
 import imghdr
-# import os
+import os
+import shutil
 # import urllib3
 # from turtle import pos
 import datetime
@@ -150,7 +151,6 @@ def do_login():
 def master():
     l_username = request.cookies.get('l_username')
     blogarticles = BlogArticle.query.all()
-    # img_path = BlogArticle.img_path
     return render_template('/master.html', blogarticles=blogarticles, username=l_username)
 
 
@@ -160,7 +160,7 @@ def master():
 @login_required
 def create():
     l_username = request.cookies.get('l_username')
-    today = datetime.now(pytz.timezone('Asia/Tokyo'))
+    today = GetNow()
 
     day_of_week = ("月", "火", "水", "木", "金", "土", "日")
     return render_template('create.html', username=l_username, today=today, day_of_week=day_of_week)
@@ -196,11 +196,14 @@ def do_create():
                 # save_filename = secure_filename(file.filename)
                 # img_path = MakePath(save_filename)
                 # file.save(img_path)
+                filename = str(file)
+                root, extension = os.path.splitext(filename)
+                dt_now = str(GetNow().strftime("%Y%m%d%H%M%S%f")) + str(extension)
+                
+                storage.child('/' + dt_now + '/').put(file)
+                # img_path = storage.child(dt_now).get_url(token=None)
 
-                dt_now = datetime.now().strftime("%Y%m%d%H%M%S%f")
-                storage.child(dt_now).put(file)
-
-                img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/" + str(dt_now) + "?alt=media"
+                img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/" + dt_now + "?alt=media"
 
             blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
             db.session.add(blogarticle)
@@ -264,9 +267,14 @@ def delete():
 
         # ファイル削除用(現状エラーの原因)
         # img_path = blogarticle.img_path
-        # if blogarticle.img_path != "":
-        # #  or img_path != "None" or img_path != None:
-        #     os.remove(blogarticle.img_path)
+        if blogarticle.img_path != "":
+        #  or img_path != "None" or img_path != None:
+            # path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/img_delete%2F%E3%81%82%E3%81%82%E3%81%82.jpg?alt=media&token=7ffb62e6-5ef8-442b-96bd-d68890c448f2"
+            # os.remove(path)
+            storage.child('img_delete').remove()
+            # os.remove("https://console.firebase.google.com/project/fblog-fefe7/storage/fblog-fefe7.appspot.com/files/~2Fimg_delete?hl=ja/fblog-fefe7.appspot.com/img_delete/あああ.jpg")
+            # shutil.rmtree('img_delete/') #ディレクトリの中身を消す https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/img_delete/
+            # # https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/
 
         db.session.delete(blogarticle)
         db.session.commit()
@@ -287,6 +295,11 @@ def logout():
     res.delete_cookie('l_username')
     res.delete_cookie('blog_id')
     return res
+
+def GetNow():
+    result = datetime.now(pytz.timezone('Asia/Tokyo'))
+    return result
+
 
 # def MakePath(f_name):
 #     root, extension = os.path.splitext(f_name)

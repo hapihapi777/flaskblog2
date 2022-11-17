@@ -6,6 +6,10 @@ h1 {
   text-align: left;
 }
 
+img {
+  width: 200px;
+}
+
 p {
   white-space: pre-wrap;
 }
