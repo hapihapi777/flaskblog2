@@ -198,9 +198,9 @@ def do_create():
                 # file.save(img_path)
                 filename = str(file)
                 root, extension = os.path.splitext(filename)
-                dt_now = str(GetNow().strftime("%Y%m%d%H%M%S%f"))
+                dt_now = '/' + str(GetNow().strftime("%Y%m%d%H%M%S%f")) + '/' + str(extension)
                 
-                storage.child('/' + dt_now + '/' + str(extension)).put(file)
+                storage.child(dt_now).put(file)
                 # img_path = storage.child(dt_now).get_url(token=None)
 
                 img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/" + dt_now + "?alt=media"
