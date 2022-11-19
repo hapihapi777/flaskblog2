@@ -13,7 +13,7 @@ import pytz
 from datetime import datetime, timedelta
 from flask import (Flask, flash, make_response, redirect, render_template,
                    request, session, url_for)
-# from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap
 from flask_login import (LoginManager, UserMixin, login_required, login_user,
                          logout_user)
 from flask_sqlalchemy import SQLAlchemy
@@ -33,7 +33,7 @@ app.permanent_session_lifetime = timedelta(minutes=60)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 
 db = SQLAlchemy(app)
-
+bootstrap = Bootstrap(app)
 
 # ログイン用
 login_manager = LoginManager()
@@ -46,6 +46,7 @@ class BlogArticle(db.Model):
     body = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('Asia/Tokyo')))
     img_path = db.Column(db.Text, nullable=True)
+    dir_path = db.Column(db.Text)
   
 class User(UserMixin, db.Model):
     __tablename__ = "signup"
@@ -188,15 +189,21 @@ def do_create():
                 # img_path = MakePath(save_filename)
                 # file.save(img_path)
                 # filename = imageDecision
-                filename = GetExtension(file)
+                # filename = os.path.basename(file)
+                filename = str(file)
+                filename = GetExtension(filename)
+                
                 # root, extension = os.path.splitext(filename)
                 dt_now = str(GetNow().strftime("%Y%m%d%H%M%S%f"))
                 basyo = 'images/' + dt_now + '/' + filename
                 storage.child(basyo).put(file)
                 # img_path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images%2F" + dt_now + "%2F0?alt=media"
                 img_path = storage.child(basyo).get_url(token=None)
+                dir_path = 'images/' + dt_now
 
-            blogarticle = BlogArticle(title=title, body=body, img_path=img_path)
+            blogarticle = BlogArticle(title=title, body=body, img_path=img_path
+                , dir_path= dir_path
+                )
             db.session.add(blogarticle)
             db.session.commit()
             return redirect(url_for('master'))
@@ -257,15 +264,14 @@ def delete():
         blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
 
         # ファイル削除用(現状エラーの原因)
-        # img_path = blogarticle.img_path
-        if blogarticle.img_path != "":
-        #  or img_path != "None" or img_path != None:
-            # path = "https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/img_delete%2F%E3%81%82%E3%81%82%E3%81%82.jpg?alt=media&token=7ffb62e6-5ef8-442b-96bd-d68890c448f2"
-            # os.remove(path)
-            storage.child('images/').remove()
-            # os.remove("https://console.firebase.google.com/project/fblog-fefe7/storage/fblog-fefe7.appspot.com/files/~2Fimg_delete?hl=ja/fblog-fefe7.appspot.com/img_delete/あああ.jpg")
-            # shutil.rmtree('img_delete/') #ディレクトリの中身を消す https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/img_delete/
-            # # https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/
+        # if blogarticle.img_path != "":
+            # dirname = os.path.basename(blogarticle.img_path)
+            # dirname = os.path.basename("gs://fblog-fefe7.appspot.com/images/20221118234249389350/")
+            # shutil.rmtree(storage.child("//fblog-fefe7.appspot.com/images/20221117163313259551/")) #ディレクトリの中身を消す
+            # shutil.rmtree(blogarticle.dir_path) #ディレクトリの中身を消す
+            # os.remove(blogarticle.img_path) #ディレクトリの中身を消す
+            # shutil.rmtree("https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images/20221117163313259551") #ディレクトリの中身を消す
+            # https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images%2F20221117163313259551%2F
 
         db.session.delete(blogarticle)
         db.session.commit()

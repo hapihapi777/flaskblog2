@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'bootstrap/base.html' %}
 {% block content %}
 <div class="container">
   <h1 class="">ブログアプリ</h1>
@@ -22,7 +22,7 @@
     <p>{{ blogarticle.body }}</p>
     {% if blogarticle.img_path %}
     <div>
-      <img src="{{ blogarticle.img_path }}">
+      <img src="{{ blogarticle.img_path }}" style="width: 200px;">
     </div>
     {% endif %}
   </details>
