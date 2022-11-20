@@ -1,7 +1,7 @@
-{% extends 'bootstrap/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 <div class="container">
-  <h1>ブログアプリ</h1>
+  <h1>ブログ</h1>
   <form action="/logout">
     <button type="submit" formmethod="POST">ログアウト</button>
   </form>
@@ -9,7 +9,6 @@
 <div class="red">{{ username }}でログイン中</div>
 {{ extension }}
 <a href="/create">記事登録画面へ</a>
-<!-- <a href="/">記事登録画面へ</a> -->
 <hr>
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>

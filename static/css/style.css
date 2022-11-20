@@ -1,9 +1,18 @@
+body {
+  font-family: Hiragino Maru Gothic Pro W4, Verdana, sans-serif;
+  font-size: 20px;
+  touch-action: manipulation;
+  margin: 0 0 0 8px;
+  padding: 0px;
+}
+
 h1 {
   color: blue;
   /* margin-right: 0px; */
   /* padding-right: 0px; */
-  margin: 0 1% 1% 0;
+  margin: 0 2% 1% 0;
   text-align: left;
+  display: inline;
 }
 
 img {
@@ -33,10 +42,6 @@ p {
 
 .inline {
   white-space: nowrap;
-  display: inline;
-}
-
-h1 {
   display: inline;
 }
 

@@ -13,7 +13,7 @@ import pytz
 from datetime import datetime, timedelta
 from flask import (Flask, flash, make_response, redirect, render_template,
                    request, session, url_for)
-from flask_bootstrap import Bootstrap
+# from flask_bootstrap import Bootstrap
 from flask_login import (LoginManager, UserMixin, login_required, login_user,
                          logout_user)
 from flask_sqlalchemy import SQLAlchemy
@@ -25,7 +25,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SECRET_KEY'] = "abcdefghijklmn"
-# bootstrap = Bootstrap(app)
 app.permanent_session_lifetime = timedelta(minutes=60)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqliteblog.db'
@@ -33,7 +32,7 @@ app.permanent_session_lifetime = timedelta(minutes=60)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://hcrrnqrjoezdpt:561263e6bcbfc2d99e39c56c0d67816eecedfcc6362cd0d7daaa7523d3166fad@ec2-3-225-110-188.compute-1.amazonaws.com:5432/d78h3uhegfieod"
 
 db = SQLAlchemy(app)
-bootstrap = Bootstrap(app)
+# bootstrap = Bootstrap(app)
 
 # ログイン用
 login_manager = LoginManager()
@@ -81,7 +80,7 @@ def load_user(user_id):
 @app.route('/', methods=['GET', 'POST'])
 def blog():
     blogarticles = BlogArticle.query.all()
-    flash("Flashテスト")
+    # flash("Flashテスト")
     return render_template('index.html', blogarticles=blogarticles)
 
 # signupページに飛ぶだけ
