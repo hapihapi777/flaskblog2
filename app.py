@@ -263,12 +263,12 @@ def delete():
         blogarticle = BlogArticle.query.filter(BlogArticle.id == blog_id).one()
 
         # ファイル削除用(現状エラーの原因)
-        # if blogarticle.img_path != "":
+        if blogarticle.img_path != "":
             # dirname = os.path.basename(blogarticle.img_path)
             # dirname = os.path.basename("gs://fblog-fefe7.appspot.com/images/20221118234249389350/")
             # shutil.rmtree(storage.child("//fblog-fefe7.appspot.com/images/20221117163313259551/")) #ディレクトリの中身を消す
             # shutil.rmtree(blogarticle.dir_path) #ディレクトリの中身を消す
-            # os.remove(blogarticle.img_path) #ディレクトリの中身を消す
+            storage.child("images/20221117163313259551").remove() #ディレクトリの中身を消す
             # shutil.rmtree("https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images/20221117163313259551") #ディレクトリの中身を消す
             # https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images%2F20221117163313259551%2F
 

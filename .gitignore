@@ -1,6 +1,5 @@
 venv/
 __pycache__/
-*.js
 *.db
 memo.txt
 .vscode/
