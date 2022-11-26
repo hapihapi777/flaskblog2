@@ -5,18 +5,23 @@
 <div class="container">
   <h1 class="">ブログ</h1>
   <a href="/signup">新規user登録ページへ</a>
-  <!-- <a href="">新規user登録ページへ</a> -->
-  <!-- <p>テスト</p>
-  <img src="fblog-fefe7.appspot.com/img_delete/あああ.jpg" style="width: 200px;"> -->
 </div>
 <a href="/login">ログインページへ</a>
-<!-- <a href="">ログインページへ</a> -->
 <hr>
 {% with messages = get_flashed_messages() %}
   {% for message in messages %}
     {{ message }}
   {% endfor %}
 {% endwith %}
+
+{% for user in users %}
+<ul>
+  <li>
+    <a href="/{{ user.username }}">{{ user.username }}</a>
+  </li>
+</ul>
+{% endfor %}
+
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
   <details>
@@ -32,4 +37,3 @@
 <hr>
 {% endfor %}
 {% endblock %}
-<!-- <script src="static/js/main.js"></script> -->
