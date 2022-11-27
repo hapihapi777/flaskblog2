@@ -9,6 +9,9 @@ import datetime
 # import numpy as np
 import psycopg2
 import pyrebase
+from pyrebase.pyrebase import storage
+# import firebase_admin
+
 import pytz
 from datetime import datetime, timedelta
 from flask import (Flask, flash, make_response, redirect, render_template,
@@ -46,6 +49,7 @@ class BlogArticle(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('Asia/Tokyo')))
     img_path = db.Column(db.Text, nullable=True)
     dir_path = db.Column(db.Text)
+    username = db.Column(db.String(20))
   
 class User(UserMixin, db.Model):
     __tablename__ = "signup"
@@ -79,20 +83,19 @@ def load_user(user_id):
 # logoutの時にPOSTで来る為POST残し
 @app.route('/', methods=['GET', 'POST'])
 def blog():
-    # blogarticles = BlogArticle.query.all()
     # flash("Flashテスト")
     users = User.query.all()
-    return render_template('index.html',
-        users = users
-        # , blogarticles=blogarticles
-        )
-
+    return render_template('index.html', users = users)
 
 @app.route('/<string:u_name>', methods=['GET'])
 def eturan(u_name):
     if User.query.filter_by(username=u_name).first():
-        blogarticles = BlogArticle.query.all()
-        return render_template('index.html', blogarticles=blogarticles)
+        if BlogArticle.query.filter_by(username=u_name).all():
+            blogarticles = BlogArticle.query.filter_by(username=u_name).all()
+            return render_template('/index.html', blogarticles=blogarticles, username=u_name)
+        else:
+            flash("記事がありません")
+            return render_template('/index.html', username=u_name)
     else:
         return redirect('/')
 
@@ -164,9 +167,13 @@ def do_login():
 @login_required
 def master():
     l_username = request.cookies.get('l_username')
-    blogarticles = BlogArticle.query.all()
-    return render_template('/master.html', blogarticles=blogarticles, username=l_username)
-
+    if BlogArticle.query.filter_by(username=l_username).all():
+        blogarticles = BlogArticle.query.filter_by(username=l_username).all()
+        return render_template('/master.html', blogarticles=blogarticles, username=l_username)
+    else:
+        flash("記事がありません")
+        return render_template('/master.html', username=l_username)
+  
 
 # 新規作成画面
 # 飛ぶだけなのでログイン中ならGET,POST共に接続可能にする
@@ -185,7 +192,7 @@ def create():
 @login_required
 def do_create():
     if request.method == "POST":
-        
+        l_username = request.cookies.get('l_username')
         title = request.form.get('title')
         body = request.form.get('body')
         
@@ -196,6 +203,7 @@ def do_create():
             imageDecision = imghdr.what(file)
             if imageDecision is None:
                 img_path = ""
+                dir_path = None
             else:
                 # save_filename = secure_filename(file.filename)
                 # img_path = MakePath(save_filename)
@@ -213,8 +221,7 @@ def do_create():
                 img_path = storage.child(basyo).get_url(token=None)
                 dir_path = 'images/' + dt_now
 
-            blogarticle = BlogArticle(title=title, body=body, img_path=img_path
-                , dir_path= dir_path
+            blogarticle = BlogArticle(title=title, body=body, img_path=img_path, dir_path= dir_path, username=l_username
                 )
             db.session.add(blogarticle)
             db.session.commit()
@@ -277,11 +284,15 @@ def delete():
 
         # ファイル削除用(現状エラーの原因)
         # if blogarticle.img_path != "":
-            # dirname = os.path.basename(blogarticle.img_path)
+        #     img_path = os.path.basename(blogarticle.img_path)
             # dirname = os.path.basename("gs://fblog-fefe7.appspot.com/images/20221118234249389350/")
             # shutil.rmtree(storage.child("//fblog-fefe7.appspot.com/images/20221117163313259551/")) #ディレクトリの中身を消す
-            # shutil.rmtree(blogarticle.dir_path) #ディレクトリの中身を消す
+            # bucket = firebase.storage_bucket()
+            # blob = bucket.blob(img_path)
+            # blob.delete()
+            # shutil.rmtree("fblog-fefe7.appspot.com/images/20221118234249389350/") #ディレクトリの中身を消す
             # storage.child("images/20221117163313259551").remove() #ディレクトリの中身を消す
+            # storage.child("images/20221117163313259551").delete() #ディレクトリの中身を消す
             # shutil.rmtree("https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images/20221117163313259551") #ディレクトリの中身を消す
             # https://firebasestorage.googleapis.com/v0/b/fblog-fefe7.appspot.com/o/images%2F20221117163313259551%2F
 

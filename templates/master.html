@@ -10,6 +10,11 @@
 {{ extension }}
 <a href="/create">記事登録画面へ</a>
 <hr>
+{% with messages = get_flashed_messages() %}
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
+{% endwith %}
 {% for blogarticle in blogarticles|sort(attribute='id', reverse = True) %}
 <article>
   <details>
