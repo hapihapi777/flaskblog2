@@ -7,13 +7,14 @@
   <a href="/signup">新規user登録ページへ</a>
 </div>
 <a href="/login">ログインページへ</a>
-<hr>
+<div>
 {% with messages = get_flashed_messages() %}
   {% for message in messages %}
     {{ message }}
+    <hr>
   {% endfor %}
 {% endwith %}
-
+</div>
 {% for user in users %}
 <ul>
   <li>

@@ -89,6 +89,7 @@ def blog():
 
 @app.route('/<string:u_name>', methods=['GET'])
 def eturan(u_name):
+    flash(u_name + "さんの記事")
     if User.query.filter_by(username=u_name).first():
         if BlogArticle.query.filter_by(username=u_name).all():
             blogarticles = BlogArticle.query.filter_by(username=u_name).all()
