@@ -50,6 +50,7 @@ class BlogArticle(db.Model):
     img_path = db.Column(db.Text, nullable=True)
     dir_path = db.Column(db.Text)
     username = db.Column(db.String(20))
+    extension = db.Column(db.Text)
   
 class User(UserMixin, db.Model):
     __tablename__ = "signup"
@@ -88,7 +89,7 @@ def blog():
     return render_template('index.html', users = users)
 
 @app.route('/<string:u_name>', methods=['GET'])
-def eturan(u_name):
+def browse(u_name):
     flash(u_name + "さんの記事")
     if User.query.filter_by(username=u_name).first():
         if BlogArticle.query.filter_by(username=u_name).all():
@@ -101,12 +102,12 @@ def eturan(u_name):
         return redirect('/')
 
 # signupページに飛ぶだけ
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup', methods=['GET'])
 def signup():
     return render_template('/signup.html')
 
 # loginページに飛ぶだけ
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET'])
 def login():
     return render_template('/login.html')
 
@@ -178,7 +179,7 @@ def master():
 
 # 新規作成画面
 # 飛ぶだけなのでログイン中ならGET,POST共に接続可能にする
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['GET'])
 @login_required
 def create():
     l_username = request.cookies.get('l_username')
@@ -200,19 +201,22 @@ def do_create():
         if title != "" and body != "": # タイトルと記事空欄じゃなかった場合
             # image = request.files['image']
             file = request.files['img']
-            # filename = GetExtension(file)
             imageDecision = imghdr.what(file)
             if imageDecision is None:
                 img_path = ""
                 dir_path = None
+                extension = None
             else:
                 # save_filename = secure_filename(file.filename)
                 # img_path = MakePath(save_filename)
                 # file.save(img_path)
                 # filename = imageDecision
                 # filename = os.path.basename(file)
-                filename = str(file)
-                filename = GetExtension(filename)
+                # root, extension = os.path.splitext(str(file))
+                file_path = str(file)
+                root, extension = os.path.splitext(os.path.basename(file_path))
+                # extension = GetExtension(file)
+                filename = "画像" + extension
                 
                 # root, extension = os.path.splitext(filename)
                 dt_now = str(GetNow().strftime("%Y%m%d%H%M%S%f"))
@@ -222,7 +226,7 @@ def do_create():
                 img_path = storage.child(basyo).get_url(token=None)
                 dir_path = 'images/' + dt_now
 
-            blogarticle = BlogArticle(title=title, body=body, img_path=img_path, dir_path= dir_path, username=l_username
+            blogarticle = BlogArticle(title=title, body=body, img_path=img_path, dir_path= dir_path, username=l_username, extension=extension
                 )
             db.session.add(blogarticle)
             db.session.commit()
@@ -322,11 +326,10 @@ def GetNow():
     return result
 
 def GetExtension(f_name):
-    # f_name = os.path.basename(str(f_name))
     root, extension = os.path.splitext(str(f_name))
-    result = "0maime" + extension
-    # return extension
-    return result
+    # result = "0maime" + str(extension)
+    return extension
+    # return result
 
 # def MakePath(f_name):
 #     root, extension = os.path.splitext(f_name)
